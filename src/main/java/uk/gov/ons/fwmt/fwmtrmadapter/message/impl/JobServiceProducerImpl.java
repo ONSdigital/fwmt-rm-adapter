@@ -20,7 +20,7 @@ public class JobServiceProducerImpl implements JobServiceProducer {
   private RabbitTemplate rabbitTemplate;
 
   @Autowired
-  @Qualifier("jobSvcQueue")
+  @Qualifier("adapterToJobSvcQueue")
   private Queue queue;
 
   @Autowired

@@ -9,59 +9,100 @@ import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+import uk.gov.ons.fwmt.fwmtrmadapter.message.JobSvcReceiver;
+import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.JobServiceReceiverImpl;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.RMReceiverImpl;
 
 @SpringBootApplication
 public class FwmtRmAdapterApplication {
 
 	//replace with RM names
-	static final String topicExchangeName = "rm-create-exchange";
+	static final String RMJobSvcExchange = "rm-jobsvc-exchange";
 
-	static final String rmQueue = "rm-create";
+	static final String rmToAdapterQueue = "rm-adapter";
 
-	static final String jobSvcQueue = "job-svc-create";
+	static final String adapterToJobSvcQueue = "adapter-jobSvc";
+
+	static final String jobSvcToAdapterQueue = "jobsvc-adapter";
+
+	static final String adapterToRMQueue = "adapter-rm";
 
 	@Bean
-	Queue RMQueue() {
-		return new Queue(rmQueue, false);
+	Queue rmToAdapterQueue() {
+		return new Queue(rmToAdapterQueue, false);
 	}
 
 	@Bean
-	Queue jobSvcQueue() {
-		return new Queue(jobSvcQueue, false);
+	Queue adapterToJobSvcQueue() {
+		return new Queue(adapterToJobSvcQueue, false);
+	}
+
+	@Bean
+	Queue jobSvcToAdapterQueue() {
+		return new Queue(jobSvcToAdapterQueue, false);
+	}
+
+	@Bean
+	Queue adapterToRMQueue() {
+		return new Queue(adapterToRMQueue, false);
 	}
 
 	@Bean
 	TopicExchange exchange() {
-		return new TopicExchange(topicExchangeName);
+		return new TopicExchange(RMJobSvcExchange);
 	}
 
 	@Bean
-	Binding binding(@Qualifier("RMQueue") Queue queue, TopicExchange exchange) {
+	Binding rmToAdapterBinding(@Qualifier("rmToAdapterQueue") Queue queue, TopicExchange exchange) {
 		return BindingBuilder.bind(queue).to(exchange).with("rm.job.request.#");
 	}
 
 	@Bean
-	Binding jobSvcbinding(@Qualifier("jobSvcQueue") Queue queue, TopicExchange exchange) {
+	Binding adapterToJobSvcBinding(@Qualifier("adapterToJobSvcQueue") Queue queue, TopicExchange exchange) {
 		return BindingBuilder.bind(queue).to(exchange).with("job.svc.job.request.#");
 	}
 
 	@Bean
+	Binding jobSvcToAdapterBinding(@Qualifier("jobSvcToAdapterQueue") Queue queue, TopicExchange exchange) {
+		return BindingBuilder.bind(queue).to(exchange).with("rm.job.response.#");
+	}
+
+	@Bean
+	@Qualifier("listenerAdapter")
+	Binding adapterToRMBinding(@Qualifier("adapterToRMQueue") Queue queue, TopicExchange exchange) {
+		return BindingBuilder.bind(queue).to(exchange).with("job.svc.job.response.#");
+	}
+
+	@Bean
 	SimpleMessageListenerContainer container(ConnectionFactory connectionFactory,
-			MessageListenerAdapter listenerAdapter) {
+			@Qualifier("listenerAdapter") MessageListenerAdapter listenerAdapter) {
 		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
-		container.setQueueNames(rmQueue);
+		container.setQueueNames(rmToAdapterQueue);
 		container.setMessageListener(listenerAdapter);
 		return container;
 	}
 
 	@Bean
+	@Qualifier("listenerAdapter")
 	MessageListenerAdapter listenerAdapter(RMReceiverImpl receiver) {
+		return new MessageListenerAdapter(receiver, "receiveMessage");
+	}
+
+	@Bean
+	SimpleMessageListenerContainer aContainer(ConnectionFactory connectionFactory,
+			@Qualifier("aListenerAdapter") MessageListenerAdapter listenerAdapter) {
+		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+		container.setConnectionFactory(connectionFactory);
+		container.setQueueNames(jobSvcToAdapterQueue);
+		container.setMessageListener(listenerAdapter);
+		return container;
+	}
+
+	@Bean
+	MessageListenerAdapter aListenerAdapter(JobServiceReceiverImpl receiver) {
 		return new MessageListenerAdapter(receiver, "receiveMessage");
 	}
 
