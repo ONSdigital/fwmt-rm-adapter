@@ -54,6 +54,7 @@
         </address>
         <!--Optional:-->
         <caseId>string</caseId>
+        <returnByDate>25/07/1995</returnByDate>
         <!--Optional:-->
         <priority>lower</priority>
         <!--Optional:-->

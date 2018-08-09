@@ -55,7 +55,7 @@ public class FwmtRmAdapterApplication {
 			MessageListenerAdapter listenerAdapter) {
 		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
-		container.setQueueNames(rmQueue,jobSvcQueue);
+		container.setQueueNames(rmQueue);
 		container.setMessageListener(listenerAdapter);
 		return container;
 	}

@@ -3,6 +3,7 @@ package uk.gov.ons.fwmt.fwmtrmadapter.message.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Exchange;
 import org.springframework.beans.factory.annotation.Qualifier;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.JobServiceProducer;
 import org.springframework.amqp.core.Queue;
@@ -22,13 +23,17 @@ public class JobServiceProducerImpl implements JobServiceProducer {
   @Qualifier("jobSvcQueue")
   private Queue queue;
 
+  @Autowired
+  private Exchange exchange;
+
   public void sendCreateJobRequest(FWMTCreateJobRequest createJobRequest) {
     try {
       String JSONJobRequest = convertToJSON(createJobRequest);
-      rabbitTemplate.convertAndSend(queue.getName(), "rm.job.request.create", JSONJobRequest);
+      rabbitTemplate.convertAndSend(exchange.getName(), "job.svc.job.request.create", JSONJobRequest);
     } catch(JsonProcessingException e) {
       e.printStackTrace();
     }
+    log.info("Done!");
 
   }
 
@@ -36,7 +41,7 @@ public class JobServiceProducerImpl implements JobServiceProducer {
 
     ObjectMapper mapper = new ObjectMapper();
     String JSONJobRequest = mapper.writeValueAsString(createJobRequest);
-    log.debug(JSONJobRequest);
+    log.info(JSONJobRequest);
     return JSONJobRequest;
   }
 }

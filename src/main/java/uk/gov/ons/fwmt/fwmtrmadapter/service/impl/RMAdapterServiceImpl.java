@@ -11,6 +11,7 @@ import uk.gov.ons.fwmt.fwmtgatewaycommon.Address;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTCreateJobRequest;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class RMAdapterServiceImpl implements RMAdapterService {
@@ -40,9 +41,9 @@ public class RMAdapterServiceImpl implements RMAdapterService {
 
     createJobRequest.setJobIdentity(actionRequest.getCaseId());
     createJobRequest.setSurveyType(actionRequest.getSurveyRef());
-    //createJobRequest.setMandatoryResourceAuthNo(actionRequest.);
+    //createJobRequest.setMandatoryResourceAuthNo(actionRequest();
     //createJobRequest.setPreallocatedJob();
-    createJobRequest.setDueDate(LocalDate.parse(actionRequest.getReturnByDate()));
+    createJobRequest.setDueDate(LocalDate.parse(actionRequest.getReturnByDate(), DateTimeFormatter.BASIC_ISO_DATE));
     createJobRequest.setAddress(address);
 
     return createJobRequest;
