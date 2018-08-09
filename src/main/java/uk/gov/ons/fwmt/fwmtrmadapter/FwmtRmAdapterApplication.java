@@ -16,8 +16,6 @@ import org.springframework.context.annotation.ComponentScan;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.RMReceiverImpl;
 
 @SpringBootApplication
-@EnableAutoConfiguration
-@ComponentScan(basePackages = {"uk.gov.ons.fwmt.fwmtrmadapter"})
 public class FwmtRmAdapterApplication {
 
 	//replace with RM names
@@ -25,9 +23,16 @@ public class FwmtRmAdapterApplication {
 
 	static final String rmQueue = "rm-create";
 
+	static final String jobSvcQueue = "job-svc-create";
+
 	@Bean
 	Queue RMQueue() {
 		return new Queue(rmQueue, false);
+	}
+
+	@Bean
+	Queue jobSvcQueue() {
+		return new Queue(jobSvcQueue, false);
 	}
 
 	@Bean
@@ -41,11 +46,16 @@ public class FwmtRmAdapterApplication {
 	}
 
 	@Bean
+	Binding jobSvcbinding(@Qualifier("jobSvcQueue") Queue queue, TopicExchange exchange) {
+		return BindingBuilder.bind(queue).to(exchange).with("job.svc.job.request.#");
+	}
+
+	@Bean
 	SimpleMessageListenerContainer container(ConnectionFactory connectionFactory,
 			MessageListenerAdapter listenerAdapter) {
 		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
-		container.setQueueNames(rmQueue);
+		container.setQueueNames(rmQueue,jobSvcQueue);
 		container.setMessageListener(listenerAdapter);
 		return container;
 	}

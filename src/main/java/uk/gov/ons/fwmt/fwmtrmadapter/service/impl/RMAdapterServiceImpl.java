@@ -1,5 +1,6 @@
 package uk.gov.ons.fwmt.fwmtrmadapter.service.impl;
 
+import org.springframework.stereotype.Component;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.JobServiceProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.ons.fwmt.fwmtrmadapter.service.RMAdapterService;
@@ -11,6 +12,7 @@ import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTCreateJobRequest;
 
 import java.time.LocalDate;
 
+@Component
 public class RMAdapterServiceImpl implements RMAdapterService {
 
   @Autowired

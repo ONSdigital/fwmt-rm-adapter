@@ -6,5 +6,5 @@ import javax.xml.bind.JAXBException;
 
 public interface RMReceiver {
 
-  void receiveMessage(String createJobRequestXML) throws JAXBException;
+  void receiveMessage(byte[] createJobRequestXML) throws JAXBException;
 }

@@ -3,6 +3,7 @@ package uk.gov.ons.fwmt.fwmtrmadapter.message.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.JobServiceProducer;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -18,6 +19,7 @@ public class JobServiceProducerImpl implements JobServiceProducer {
   private RabbitTemplate rabbitTemplate;
 
   @Autowired
+  @Qualifier("jobSvcQueue")
   private Queue queue;
 
   public void sendCreateJobRequest(FWMTCreateJobRequest createJobRequest) {
