@@ -68,7 +68,7 @@ task genJaxb {
 }
 
 bootJar {
-	baseName = 'gs-messaging-rabbitmq'
+	baseName = 'fwmt-rm-adapter'
 	version =  '0.1.0'
 }
 
