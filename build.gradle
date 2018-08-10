@@ -11,6 +11,8 @@ buildscript {
 }
 
 apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
@@ -21,10 +23,64 @@ sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
+	mavenLocal()
+}
+
+configurations {
+	jaxb
+}
+
+task genJaxb {
+	ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
+	ext.classesDir = "${buildDir}/classes/jaxb"
+	ext.schema = "${projectDir}/src/main/resources/xsd"
+
+	outputs.dir classesDir
+
+	doLast() {
+		project.ant {
+			taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
+					classpath: configurations.jaxb.asPath
+			mkdir(dir: sourcesDir)
+			mkdir(dir: classesDir)
+
+			xjc(destdir: sourcesDir) {
+				//arg(value: "-xsd")
+				produces(dir: sourcesDir, includes: "**/*.java")
+				schema(dir: schema, includes: "**/*.xsd")
+			}
+
+			javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
+					debugLevel: "lines,vars,source",
+					classpath: configurations.jaxb.asPath) {
+				src(path: sourcesDir)
+				include(name: "**/*.java")
+				include(name: "*.java")
+			}
+
+			copy(todir: classesDir) {
+				fileset(dir: sourcesDir, erroronmissingdir: false) {
+					exclude(name: "**/*.java")
+				}
+			}
+		}
+	}
+}
+
+bootJar {
+	baseName = 'gs-messaging-rabbitmq'
+	version =  '0.1.0'
 }
 
 
 dependencies {
+	compile(files(genJaxb.classesDir).builtBy(genJaxb))
+	jaxb "com.sun.xml.bind:jaxb-xjc:2.1.7"
+	compile group: 'org.projectlombok', name: 'lombok', version: '1.16.8'
+	compile group: 'uk.gov.ons.fwmt', name: 'fwmt-gateway-common', version: '0.0.1-SNAPSHOT'
+	compile("org.springframework.boot:spring-boot-starter-amqp")
 	compile('org.springframework.boot:spring-boot-starter')
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.5'
+	compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.5'
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
