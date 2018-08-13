@@ -2,6 +2,9 @@ package uk.gov.ons.fwmt.fwmtrmadapter.message.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.Queue;
@@ -15,9 +18,19 @@ import uk.gov.ons.fwmt.fwmtrmadapter.message.JobServiceProducer;
 @Component
 public class JobServiceProducerImpl implements JobServiceProducer {
 
-  @Autowired private RabbitTemplate rabbitTemplate;
-  @Autowired @Qualifier("adapterToJobSvcQueue") private Queue queue;
-  @Autowired private Exchange exchange;
+  @Autowired
+  private RabbitTemplate rabbitTemplate;
+
+  @Autowired
+  @Qualifier("adapterToJobSvcQueue")
+  private Queue queue;
+
+  @Autowired
+  private Exchange exchange;
+
+  @Autowired
+  private ObjectMapper objectMapper;
+
 
   public <T> void sendMessage(Object dto) {
     try {
@@ -30,8 +43,9 @@ public class JobServiceProducerImpl implements JobServiceProducer {
   }
 
   private <T> String convertToJSON(Object dto) throws JsonProcessingException {
-    ObjectMapper mapper = new ObjectMapper();
-    String JSONJobRequest = mapper.writeValueAsString(dto);
+    objectMapper.registerModule(new JavaTimeModule());
+    objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    String JSONJobRequest = objectMapper.writeValueAsString(dto);
     log.info(JSONJobRequest);
     return JSONJobRequest;
   }

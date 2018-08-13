@@ -36,12 +36,16 @@ public class MessageConverterImpl implements MessageConverter {
     //fwmtCreateJobRequest.setPreallocatedJob();
     fwmtCreateJobRequest.setDueDate(LocalDate.parse(actionRequest.getReturnByDate(), DateTimeFormatter.BASIC_ISO_DATE));
     fwmtCreateJobRequest.setAddress(address);
+    fwmtCreateJobRequest.setActionType("Create");
 
     return fwmtCreateJobRequest;
   }
 
   @Override public FWMTCancelJobRequest cancelJob(ActionInstruction actionInstruction) {
     FWMTCancelJobRequest fwmtCancelJobRequest = new FWMTCancelJobRequest();
+    fwmtCancelJobRequest.setActionType("Cancel");
+    fwmtCancelJobRequest.setJobIdentity(actionInstruction.getActionCancel().getActionId());
+    fwmtCancelJobRequest.setReason(actionInstruction.getActionCancel().getReason());
     return fwmtCancelJobRequest;
   }
 }

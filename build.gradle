@@ -82,5 +82,6 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter')
 	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.5'
 	compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.5'
+	compile group: 'org.json', name: 'json', version: '20180130'
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }

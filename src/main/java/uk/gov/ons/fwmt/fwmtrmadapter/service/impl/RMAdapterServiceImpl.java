@@ -6,28 +6,29 @@ import org.springframework.stereotype.Component;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.DummyTMResponse;
 import uk.gov.ons.fwmt.fwmtrmadapter.data.DummyRMReturn;
+import uk.gov.ons.fwmt.fwmtrmadapter.message.JobServiceProducer;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.RMProducer;
-import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.JobServiceProducerImpl;
+import uk.gov.ons.fwmt.fwmtrmadapter.service.MessageConverter;
 import uk.gov.ons.fwmt.fwmtrmadapter.service.RMAdapterService;
 
 @Slf4j
 @Component
 public class RMAdapterServiceImpl implements RMAdapterService {
 
-  @Autowired JobServiceProducerImpl jobServiceProducer;
-  @Autowired MessageConverterImpl messageConverter;
+  @Autowired JobServiceProducer jobServiceProducer;
+  @Autowired MessageConverter messageConverter;
   @Autowired RMProducer rmProducer;
 
 
   public void sendJobRequest(ActionInstruction actionInstruction) {
-    if (actionInstruction.getActionRequest().getActionType().matches("create")) {
+    if (actionInstruction.getActionRequest() != null) {
       jobServiceProducer.sendMessage(messageConverter.createJob(actionInstruction));
     }
-    if (actionInstruction.getActionRequest().getActionType().matches("update")) {
+    else if (actionInstruction.getActionUpdate() != null) {
       //TODO add code for update
 
     }
-    if (actionInstruction.getActionRequest().getActionType().matches("cancel")) {
+    else if (actionInstruction.getActionCancel() != null) {
       jobServiceProducer.sendMessage(messageConverter.cancelJob(actionInstruction));
     }
   }
