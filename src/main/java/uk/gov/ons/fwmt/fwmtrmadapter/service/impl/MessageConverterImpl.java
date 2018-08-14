@@ -34,7 +34,7 @@ public class MessageConverterImpl implements MessageConverter {
     fwmtCreateJobRequest.setSurveyType(actionRequest.getSurveyRef());
     //fwmtCreateJobRequest.setMandatoryResourceAuthNo(actionRequest();
     //fwmtCreateJobRequest.setPreallocatedJob();
-    fwmtCreateJobRequest.setDueDate(LocalDate.parse(actionRequest.getReturnByDate(), DateTimeFormatter.BASIC_ISO_DATE));
+   // fwmtCreateJobRequest.setDueDate(LocalDate.parse(actionRequest.getReturnByDate(), DateTimeFormatter.BASIC_ISO_DATE));
     fwmtCreateJobRequest.setAddress(address);
     fwmtCreateJobRequest.setActionType("Create");
 
