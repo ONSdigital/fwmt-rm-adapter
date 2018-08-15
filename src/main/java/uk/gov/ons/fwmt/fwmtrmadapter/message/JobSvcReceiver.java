@@ -4,5 +4,5 @@ import javax.xml.bind.JAXBException;
 
 public interface JobSvcReceiver {
 
-  void receiveMessage(byte[] returnJobRequestXML);
+  void receiveMessage(String returnJobRequestXML);
 }

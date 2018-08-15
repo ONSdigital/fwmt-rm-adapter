@@ -30,13 +30,16 @@ public class MessageConverterImpl implements MessageConverter {
     address.setPostCode(actionAddress.getPostcode());
     address.setTownName(actionAddress.getTownName());
 
-    fwmtCreateJobRequest.setJobIdentity(actionRequest.getCaseId());
+    fwmtCreateJobRequest.setJobIdentity(actionRequest.getActionId());
     fwmtCreateJobRequest.setSurveyType(actionRequest.getSurveyRef());
+    //TODO set as per data mapping
     //fwmtCreateJobRequest.setMandatoryResourceAuthNo(actionRequest();
     //fwmtCreateJobRequest.setPreallocatedJob();
-   // fwmtCreateJobRequest.setDueDate(LocalDate.parse(actionRequest.getReturnByDate(), DateTimeFormatter.BASIC_ISO_DATE));
+    fwmtCreateJobRequest.setDueDate(LocalDate.parse(actionRequest.getReturnByDate(), DateTimeFormatter.BASIC_ISO_DATE));
     fwmtCreateJobRequest.setAddress(address);
     fwmtCreateJobRequest.setActionType("Create");
+    //TODO add caseId additional property
+
 
     return fwmtCreateJobRequest;
   }

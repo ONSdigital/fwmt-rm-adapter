@@ -43,8 +43,7 @@ public class JobServiceProducerImpl implements JobServiceProducer {
   }
 
   private <T> String convertToJSON(Object dto) throws JsonProcessingException {
-    objectMapper.registerModule(new JavaTimeModule());
-    objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+
     String JSONJobRequest = objectMapper.writeValueAsString(dto);
     log.info(JSONJobRequest);
     return JSONJobRequest;
