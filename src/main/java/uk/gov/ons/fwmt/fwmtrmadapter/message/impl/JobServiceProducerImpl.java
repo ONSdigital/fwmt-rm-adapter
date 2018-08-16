@@ -32,7 +32,7 @@ public class JobServiceProducerImpl implements JobServiceProducer {
   private ObjectMapper objectMapper;
 
 
-  public <T> void sendMessage(Object dto) {
+  public void sendMessage(Object dto) {
     try {
       String JSONJobRequest = convertToJSON(dto);
       rabbitTemplate.convertAndSend(exchange.getName(), "job.svc.job.request.create", JSONJobRequest);
@@ -42,10 +42,10 @@ public class JobServiceProducerImpl implements JobServiceProducer {
     log.info("Message send to queue", dto);
   }
 
-  private <T> String convertToJSON(Object dto) throws JsonProcessingException {
+  private String convertToJSON(Object dto) throws JsonProcessingException {
 
     String JSONJobRequest = objectMapper.writeValueAsString(dto);
-    log.info(JSONJobRequest);
+    log.info("CreateJobRequest: " + JSONJobRequest);
     return JSONJobRequest;
   }
 }
