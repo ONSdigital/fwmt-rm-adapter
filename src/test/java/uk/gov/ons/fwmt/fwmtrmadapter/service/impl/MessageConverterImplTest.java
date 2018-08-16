@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTCancelJobRequest;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTCreateJobRequest;
 import uk.gov.ons.fwmt.fwmtrmadapter.helper.ActionInstructionBuilder;
 
@@ -44,5 +45,20 @@ public class MessageConverterImplTest {
     assertEquals(actionInstruction.getActionRequest().getAddress().getLine2(), result.getAddress().getLine2());
     assertEquals(actionInstruction.getActionRequest().getAddress().getLine3(), result.getAddress().getLine3());
     assertEquals(actionInstruction.getActionRequest().getAddress().getLine4(), result.getAddress().getLine4());
+  }
+
+  @Test
+  public void cancelJob() {
+    //Given
+    ActionInstructionBuilder actionInstructionBuilder = new ActionInstructionBuilder();
+    ActionInstruction actionInstruction = actionInstructionBuilder.cancelActionInstructionBuilder();
+
+    //When
+    FWMTCancelJobRequest result = messageConverter.cancelJob(actionInstruction);
+
+    //Then
+    assertEquals(actionInstruction.getActionCancel().getActionId(), result.getJobIdentity());
+    assertEquals(actionInstruction.getActionCancel().getReason(), result.getReason());
+
   }
 }

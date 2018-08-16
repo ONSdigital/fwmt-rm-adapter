@@ -15,7 +15,8 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class MessageConverterImpl implements MessageConverter {
 
-  @Override public FWMTCreateJobRequest createJob(ActionInstruction actionInstruction) {
+  @Override
+  public FWMTCreateJobRequest createJob(ActionInstruction actionInstruction) {
     FWMTCreateJobRequest fwmtCreateJobRequest = new FWMTCreateJobRequest();
     ActionRequest actionRequest = actionInstruction.getActionRequest();
     ActionAddress actionAddress = actionRequest.getAddress();
@@ -40,15 +41,16 @@ public class MessageConverterImpl implements MessageConverter {
     fwmtCreateJobRequest.setActionType("Create");
     //TODO add caseId additional property
 
-
     return fwmtCreateJobRequest;
   }
 
-  @Override public FWMTCancelJobRequest cancelJob(ActionInstruction actionInstruction) {
+  @Override
+  public FWMTCancelJobRequest cancelJob(ActionInstruction actionInstruction) {
     FWMTCancelJobRequest fwmtCancelJobRequest = new FWMTCancelJobRequest();
     fwmtCancelJobRequest.setActionType("Cancel");
     fwmtCancelJobRequest.setJobIdentity(actionInstruction.getActionCancel().getActionId());
     fwmtCancelJobRequest.setReason(actionInstruction.getActionCancel().getReason());
+
     return fwmtCancelJobRequest;
   }
 }

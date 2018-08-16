@@ -1,6 +1,7 @@
 package uk.gov.ons.fwmt.fwmtrmadapter.helper;
 
 import uk.gov.ons.ctp.response.action.message.instruction.ActionAddress;
+import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
 
@@ -32,11 +33,15 @@ public class ActionInstructionBuilder {
     return actionInstruction;
   }
 
-  //  public void updateActionInstructionBuilder() {
-  //    ActionInstruction actionInstruction = new ActionInstruction();
-  //  }
-  //
-  //  public void cancelActionInstructionBuilder(){
-  //    ActionInstruction actionInstruction = new ActionInstruction();
-  //  }
+  public ActionInstruction cancelActionInstructionBuilder() {
+    ActionInstruction actionInstruction = new ActionInstruction();
+    ActionCancel actionCancel = new ActionCancel();
+
+    actionCancel.setReason("reason");
+    actionCancel.setActionId("testActionID");
+
+    actionInstruction.setActionCancel(actionCancel);
+
+    return actionInstruction;
+  }
 }
