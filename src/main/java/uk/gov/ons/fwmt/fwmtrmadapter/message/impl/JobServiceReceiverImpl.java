@@ -24,17 +24,21 @@ public class JobServiceReceiverImpl implements JobSvcReceiver {
 
   @Autowired
   RMAdapterService rmAdapterService;
+  @Autowired
+  ObjectMapper objectMapper;
 
-  public void receiveMessage(byte[] returnJobRequestXML) {
+  public void receiveMessage(String returnJobRequestXML) {
 
-    log.info(new String("RECEIVED FROM JOBSVC" +returnJobRequestXML));
-    ObjectMapper mapper = new ObjectMapper();
-    DummyTMResponse response = new DummyTMResponse();
+    final String returnJobRequestXMLStr = new String(returnJobRequestXML);
+    log.info("Received Message:{}",returnJobRequestXMLStr);
+
     try {
-      response = mapper.readValue(returnJobRequestXML, DummyTMResponse.class);
+      final DummyTMResponse response = objectMapper.readValue(returnJobRequestXMLStr, DummyTMResponse.class);
+      rmAdapterService.returnJobRequest(response);
+
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error("Error:", e);
+
     }
-    rmAdapterService.returnJobRequest(response);
   }
 }

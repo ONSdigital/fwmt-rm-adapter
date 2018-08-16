@@ -22,6 +22,8 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
+	maven { url "http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot" }
+	maven { url "http://artifactory-sdc.onsdigital.uk/artifactory/libs-release" }
 	mavenCentral()
 	mavenLocal()
 }
@@ -68,7 +70,7 @@ task genJaxb {
 }
 
 bootJar {
-	baseName = 'gs-messaging-rabbitmq'
+	baseName = 'fwmt-rm-adapter'
 	version =  '0.1.0'
 }
 
@@ -82,5 +84,6 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter')
 	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.5'
 	compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.5'
+	compile group: 'org.json', name: 'json', version: '20180130'
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
