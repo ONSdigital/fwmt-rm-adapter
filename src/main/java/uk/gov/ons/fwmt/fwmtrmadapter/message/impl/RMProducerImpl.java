@@ -39,14 +39,11 @@ public class RMProducerImpl implements RMProducer {
       marshaller.marshal(dummyRMReturn, sw);
       String rmJobRequestResponse = sw.toString();
 
+      log.info("POSTING TO RM" + rmJobRequestResponse);
       rabbitTemplate.convertAndSend(exchange.getName(), "job.svc.job.response.response", rmJobRequestResponse);
-      log.info(new String("POSTING TO RM" +rmJobRequestResponse));
-
     } catch (JAXBException e) {
       e.printStackTrace();
     }
-
-
   }
 
 

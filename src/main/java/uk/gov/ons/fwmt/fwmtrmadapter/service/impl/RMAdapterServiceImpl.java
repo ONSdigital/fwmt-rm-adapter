@@ -1,17 +1,17 @@
 package uk.gov.ons.fwmt.fwmtrmadapter.service.impl;
 
-import org.springframework.stereotype.Component;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.DummyTMResponse;
-import uk.gov.ons.fwmt.fwmtrmadapter.message.JobServiceProducer;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.gov.ons.fwmt.fwmtrmadapter.message.RMProducer;
-import uk.gov.ons.fwmt.fwmtrmadapter.service.RMAdapterService;
+import org.springframework.stereotype.Component;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionAddress;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.Address;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.DummyTMResponse;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTCreateJobRequest;
 import uk.gov.ons.fwmt.fwmtrmadapter.data.DummyRMReturn;
+import uk.gov.ons.fwmt.fwmtrmadapter.message.JobServiceProducer;
+import uk.gov.ons.fwmt.fwmtrmadapter.message.RMProducer;
+import uk.gov.ons.fwmt.fwmtrmadapter.service.RMAdapterService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -30,7 +30,7 @@ public class RMAdapterServiceImpl implements RMAdapterService {
     jobServiceProducer.sendCreateJobRequest(createJobRequest);
   }
 
-  private FWMTCreateJobRequest transformActionInstruction(ActionInstruction actionInstruction) {
+  protected FWMTCreateJobRequest transformActionInstruction(ActionInstruction actionInstruction) {
     FWMTCreateJobRequest createJobRequest = new FWMTCreateJobRequest();
     ActionRequest actionRequest = actionInstruction.getActionRequest();
     ActionAddress actionAddress = actionRequest.getAddress();
@@ -58,10 +58,9 @@ public class RMAdapterServiceImpl implements RMAdapterService {
   public void returnJobRequest(DummyTMResponse response) {
     DummyRMReturn returnMsg = convertTMResponse(response);
     rmProducer.sendJobRequestResponse(returnMsg);
-
   }
 
-  private DummyRMReturn convertTMResponse(DummyTMResponse response) {
+  protected DummyRMReturn convertTMResponse(DummyTMResponse response) {
     DummyRMReturn rmReturnMessage = new DummyRMReturn();
     rmReturnMessage.setIdentity(response.getIdentity());
     return rmReturnMessage;
