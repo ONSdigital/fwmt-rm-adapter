@@ -22,8 +22,8 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
-	maven { url "http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot" }
-	maven { url "http://artifactory-sdc.onsdigital.uk/artifactory/libs-release" }
+	maven { url "http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot-local" }
+	maven { url "http://artifactory-sdc.onsdigital.uk/artifactory/libs-release-local" }
 	mavenCentral()
 	mavenLocal()
 }
