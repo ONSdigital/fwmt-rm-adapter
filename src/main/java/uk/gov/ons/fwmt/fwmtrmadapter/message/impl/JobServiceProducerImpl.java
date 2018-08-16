@@ -2,9 +2,6 @@ package uk.gov.ons.fwmt.fwmtrmadapter.message.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.Queue;
@@ -42,8 +39,7 @@ public class JobServiceProducerImpl implements JobServiceProducer {
     log.info("Message send to queue", dto);
   }
 
-  private String convertToJSON(Object dto) throws JsonProcessingException {
-
+  protected String convertToJSON(Object dto) throws JsonProcessingException {
     String JSONJobRequest = objectMapper.writeValueAsString(dto);
     log.info("CreateJobRequest: " + JSONJobRequest);
     return JSONJobRequest;

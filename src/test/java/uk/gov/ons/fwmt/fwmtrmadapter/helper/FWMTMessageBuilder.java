@@ -20,6 +20,7 @@ public class FWMTMessageBuilder {
     address.setLine4("testLine4");
     address.setPostCode("testPostCode");
     address.setTownName("testTownName");
+    fwmtCreateJobRequest.setActionType("create");
     fwmtCreateJobRequest.setAddress(address);
     fwmtCreateJobRequest.setDueDate(LocalDate.of(2000, 11, 11));
     fwmtCreateJobRequest.setJobIdentity("testJobIdentity");

@@ -15,9 +15,14 @@ import uk.gov.ons.fwmt.fwmtrmadapter.service.RMAdapterService;
 @Component
 public class RMAdapterServiceImpl implements RMAdapterService {
 
-  @Autowired JobServiceProducer jobServiceProducer;
-  @Autowired MessageConverter messageConverter;
-  @Autowired RMProducer rmProducer;
+  @Autowired
+  JobServiceProducer jobServiceProducer;
+
+  @Autowired
+  MessageConverter messageConverter;
+
+  @Autowired
+  RMProducer rmProducer;
 
 
   public void sendJobRequest(ActionInstruction actionInstruction) {
@@ -39,7 +44,7 @@ public class RMAdapterServiceImpl implements RMAdapterService {
 
   }
 
-  private DummyRMReturn convertTMResponse(DummyTMResponse response) {
+  protected DummyRMReturn convertTMResponse(DummyTMResponse response) {
     DummyRMReturn rmReturnMessage = new DummyRMReturn();
     rmReturnMessage.setIdentity(response.getIdentity());
     return rmReturnMessage;
