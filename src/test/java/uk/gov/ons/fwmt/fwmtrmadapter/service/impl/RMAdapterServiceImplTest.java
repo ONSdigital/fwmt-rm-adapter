@@ -1,5 +1,6 @@
 package uk.gov.ons.fwmt.fwmtrmadapter.service.impl;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -8,9 +9,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.DummyTMResponse;
 import uk.gov.ons.fwmt.fwmtrmadapter.data.DummyRMReturn;
-import uk.gov.ons.fwmt.fwmtrmadapter.message.JobServiceProducer;
+import uk.gov.ons.fwmt.fwmtrmadapter.helper.ActionInstructionBuilder;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.RMProducerImpl;
 
 import static org.junit.Assert.assertEquals;
@@ -22,7 +24,7 @@ public class RMAdapterServiceImplTest {
   private RMAdapterServiceImpl rmAdapterService;
 
   @Mock
-  private JobServiceProducer jobServiceProducer;
+  private MessageConverterImpl messageConverter;
 
   @Mock
   private RMProducerImpl rmProducer;
@@ -30,19 +32,32 @@ public class RMAdapterServiceImplTest {
   @Captor
   private ArgumentCaptor argCaptor;
 
+  @Ignore
   @Test
   public void sendCreateJobRequest() {
+    //Given
+    ActionInstructionBuilder actionInstructionBuilder = new ActionInstructionBuilder();
+    ActionInstruction actionInstruction = actionInstructionBuilder.createActionInstructionBuilder();
 
+    //When
+    rmAdapterService.sendJobRequest(actionInstruction);
   }
 
+  @Ignore
   @Test
   public void sendUpdateJobRequest() {
 
   }
 
+  @Ignore
   @Test
   public void sendCancelJobRequest() {
+    //Given
+    ActionInstructionBuilder actionInstructionBuilder = new ActionInstructionBuilder();
+    ActionInstruction actionInstruction = actionInstructionBuilder.cancelActionInstructionBuilder();
 
+    //When
+    rmAdapterService.sendJobRequest(actionInstruction);
   }
 
   @Test
