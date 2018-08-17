@@ -30,8 +30,7 @@ public class RMAdapterServiceImpl implements RMAdapterService {
       jobServiceProducer.sendMessage(messageConverter.createJob(actionInstruction));
     }
     else if (actionInstruction.getActionUpdate() != null) {
-      //TODO add code for update
-
+      jobServiceProducer.sendMessage(messageConverter.updateJob(actionInstruction));
     }
     else if (actionInstruction.getActionCancel() != null) {
       jobServiceProducer.sendMessage(messageConverter.cancelJob(actionInstruction));

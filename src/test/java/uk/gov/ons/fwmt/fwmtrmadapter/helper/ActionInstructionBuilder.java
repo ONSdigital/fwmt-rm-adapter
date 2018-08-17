@@ -4,6 +4,7 @@ import uk.gov.ons.ctp.response.action.message.instruction.ActionAddress;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
+import uk.gov.ons.ctp.response.action.message.instruction.ActionUpdate;
 
 import java.math.BigDecimal;
 
@@ -41,6 +42,15 @@ public class ActionInstructionBuilder {
     actionCancel.setActionId("testActionID");
 
     actionInstruction.setActionCancel(actionCancel);
+
+    return actionInstruction;
+  }
+
+  public ActionInstruction updateActionInstructionBuilder() {
+    ActionInstruction actionInstruction = new ActionInstruction();
+    ActionUpdate actionUpdate = new ActionUpdate();
+
+    actionInstruction.setActionUpdate(actionUpdate);
 
     return actionInstruction;
   }
