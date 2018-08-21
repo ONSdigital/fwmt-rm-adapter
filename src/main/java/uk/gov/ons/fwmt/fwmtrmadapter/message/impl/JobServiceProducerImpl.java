@@ -36,7 +36,7 @@ public class JobServiceProducerImpl implements JobServiceProducer {
       String JSONJobRequest = convertToJSON(dto);
       rabbitTemplate.convertAndSend(exchange.getName(), "job.svc.job.request.create", JSONJobRequest);
     } catch(JsonProcessingException e) {
-      throw new FWMTCommonException(ExceptionCode.INVALID_JSON,"Object could not be mapped to JSON",e);
+      throw new FWMTCommonException(ExceptionCode.UNABLE_TO_MAP_JSON,"Object could not be mapped to JSON",e);
     }
     log.info("Message send to queue", dto);
   }
