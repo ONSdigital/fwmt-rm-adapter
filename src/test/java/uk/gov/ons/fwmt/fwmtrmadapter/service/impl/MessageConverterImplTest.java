@@ -7,12 +7,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTCancelJobRequest;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTCreateJobRequest;
+import uk.gov.ons.fwmt.fwmtrmadapter.data.FWMTUpdateJobRequest;
 import uk.gov.ons.fwmt.fwmtrmadapter.helper.ActionInstructionBuilder;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MessageConverterImplTest {
@@ -59,6 +61,18 @@ public class MessageConverterImplTest {
     //Then
     assertEquals(actionInstruction.getActionCancel().getActionId(), result.getJobIdentity());
     assertEquals(actionInstruction.getActionCancel().getReason(), result.getReason());
+  }
 
+  @Test
+  public void updateJob() {
+    //Given
+    ActionInstructionBuilder actionInstructionBuilder = new ActionInstructionBuilder();
+    ActionInstruction actionInstruction = actionInstructionBuilder.updateActionInstructionBuilder();
+
+    //When
+    FWMTUpdateJobRequest result = messageConverter.updateJob(actionInstruction);
+
+    //Then
+    assertNotNull(result);
   }
 }
