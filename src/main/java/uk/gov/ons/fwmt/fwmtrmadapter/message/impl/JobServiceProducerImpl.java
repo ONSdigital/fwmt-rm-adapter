@@ -9,6 +9,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.ExceptionCode;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.types.FWMTCommonException;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.JobServiceProducer;
 
 @Slf4j
@@ -34,7 +36,7 @@ public class JobServiceProducerImpl implements JobServiceProducer {
       String JSONJobRequest = convertToJSON(dto);
       rabbitTemplate.convertAndSend(exchange.getName(), "job.svc.job.request.create", JSONJobRequest);
     } catch(JsonProcessingException e) {
-      e.printStackTrace();
+      throw new FWMTCommonException(ExceptionCode.INVALID_JSON,"Object could not be mapped to JSON",e);
     }
     log.info("Message send to queue", dto);
   }

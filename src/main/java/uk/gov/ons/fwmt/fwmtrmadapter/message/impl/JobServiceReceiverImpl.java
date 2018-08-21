@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.DummyTMResponse;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.ExceptionCode;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.types.FWMTCommonException;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.JobSvcReceiver;
 import uk.gov.ons.fwmt.fwmtrmadapter.service.RMAdapterService;
 
@@ -29,8 +31,7 @@ public class JobServiceReceiverImpl implements JobSvcReceiver {
       rmAdapterService.returnJobRequest(response);
 
     } catch (IOException e) {
-      log.error("Error:", e);
-
+      throw new FWMTCommonException(ExceptionCode.INVALID_XML,"The XML received could not be marshalled",e);
     }
   }
 }

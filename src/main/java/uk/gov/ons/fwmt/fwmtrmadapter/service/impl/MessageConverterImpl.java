@@ -7,7 +7,7 @@ import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.Address;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTCancelJobRequest;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTCreateJobRequest;
-import uk.gov.ons.fwmt.fwmtrmadapter.data.FWMTUpdateJobRequest;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTUpdateJobRequest;
 import uk.gov.ons.fwmt.fwmtrmadapter.service.MessageConverter;
 
 import java.time.LocalDate;

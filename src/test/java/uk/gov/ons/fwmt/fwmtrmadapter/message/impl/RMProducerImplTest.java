@@ -1,6 +1,8 @@
 package uk.gov.ons.fwmt.fwmtrmadapter.message.impl;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -9,11 +11,19 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.ExceptionCode;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.types.FWMTCommonException;
 import uk.gov.ons.fwmt.fwmtrmadapter.data.DummyRMReturn;
-import uk.gov.ons.fwmt.fwmtrmadapter.message.RMProducer;
+
+import javax.xml.bind.JAXBException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,6 +42,9 @@ public class RMProducerImplTest {
   @Captor
   private ArgumentCaptor argumentCaptor;
 
+  @Rule
+  public ExpectedException expectedException = ExpectedException.none();
+
   @Test
   public void sendJobRequestResponse() {
 
@@ -47,5 +60,17 @@ public class RMProducerImplTest {
     assertEquals(expectedResult, result);
 
   }
+
+//  @Test(expected = FWMTCommonException.class)
+//  public void sendBadJobRequestResponse() {
+//
+//    DummyRMReturn dummyRMReturn =  new DummyRMReturn();
+//    dummyRMReturn.setIdentity("Test");
+//
+//    doThrow(JAXBException.class).when(rabbitTemplate).convertAndSend(eq("exchangeName"),eq("job.svc.job.response.response"),anyString());
+//
+//    rmProducer.sendJobRequestResponse(dummyRMReturn);
+//
+//  }
 
 }

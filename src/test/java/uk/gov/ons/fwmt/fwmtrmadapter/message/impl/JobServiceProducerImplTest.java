@@ -2,6 +2,7 @@ package uk.gov.ons.fwmt.fwmtrmadapter.message.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONPointerException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -12,10 +13,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTCreateJobRequest;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.types.FWMTCommonException;
 import uk.gov.ons.fwmt.fwmtrmadapter.helper.FWMTMessageBuilder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -71,5 +75,17 @@ public class JobServiceProducerImplTest {
 
     //Then
     assertNotNull(JSONResponce);
+  }
+
+  @Test(expected = FWMTCommonException.class)
+  public void sendBadMessage() throws JsonProcessingException {
+    //Given
+    FWMTMessageBuilder fwmtMessageBuilder = new FWMTMessageBuilder();
+    FWMTCreateJobRequest fwmtCreateJobRequest = fwmtMessageBuilder.buildFWMTCreateJobRequest();
+    when(objectMapper.writeValueAsString(eq(fwmtCreateJobRequest))).thenThrow(new JsonProcessingException("Error"){});
+
+    //When
+    jobServiceProducer.sendMessage(fwmtCreateJobRequest);
+
   }
 }
