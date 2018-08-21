@@ -7,6 +7,7 @@ import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.Address;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTCancelJobRequest;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTCreateJobRequest;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTUpdateJobRequest;
 import uk.gov.ons.fwmt.fwmtrmadapter.service.MessageConverter;
 
 import java.time.LocalDate;
@@ -15,7 +16,8 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class MessageConverterImpl implements MessageConverter {
 
-  @Override public FWMTCreateJobRequest createJob(ActionInstruction actionInstruction) {
+  @Override
+  public FWMTCreateJobRequest createJob(ActionInstruction actionInstruction) {
     FWMTCreateJobRequest fwmtCreateJobRequest = new FWMTCreateJobRequest();
     ActionRequest actionRequest = actionInstruction.getActionRequest();
     ActionAddress actionAddress = actionRequest.getAddress();
@@ -40,15 +42,24 @@ public class MessageConverterImpl implements MessageConverter {
     fwmtCreateJobRequest.setActionType("Create");
     //TODO add caseId additional property
 
-
     return fwmtCreateJobRequest;
   }
 
-  @Override public FWMTCancelJobRequest cancelJob(ActionInstruction actionInstruction) {
+  @Override
+  public FWMTCancelJobRequest cancelJob(ActionInstruction actionInstruction) {
     FWMTCancelJobRequest fwmtCancelJobRequest = new FWMTCancelJobRequest();
     fwmtCancelJobRequest.setActionType("Cancel");
     fwmtCancelJobRequest.setJobIdentity(actionInstruction.getActionCancel().getActionId());
     fwmtCancelJobRequest.setReason(actionInstruction.getActionCancel().getReason());
+
     return fwmtCancelJobRequest;
+  }
+
+  @Override
+  public FWMTUpdateJobRequest updateJob(ActionInstruction actionInstruction) {
+    FWMTUpdateJobRequest fwmtUpdateJobRequest = new FWMTUpdateJobRequest();
+    fwmtUpdateJobRequest.setActionType("update");
+
+    return fwmtUpdateJobRequest;
   }
 }

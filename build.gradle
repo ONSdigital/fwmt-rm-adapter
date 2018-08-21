@@ -25,7 +25,6 @@ repositories {
 	maven { url "http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot-local" }
 	maven { url "http://artifactory-sdc.onsdigital.uk/artifactory/libs-release-local" }
 	mavenCentral()
-	mavenLocal()
 }
 
 configurations {
