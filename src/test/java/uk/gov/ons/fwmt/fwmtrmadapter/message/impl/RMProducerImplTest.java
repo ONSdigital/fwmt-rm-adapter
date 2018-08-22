@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.ExceptionCode;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.types.FWMTCommonException;
 import uk.gov.ons.fwmt.fwmtrmadapter.data.DummyRMReturn;
@@ -51,10 +52,10 @@ public class RMProducerImplTest {
     DummyRMReturn rmReturn = new DummyRMReturn();
     rmReturn.setIdentity("testIdentity");
     String expectedResult = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><DummyRMReturn><identity>testIdentity</identity></DummyRMReturn>";
-    when(exchange.getName()).thenReturn("rm-jobsvc-exchange");
+    when(exchange.getName()).thenReturn(QueueConfig.RM_JOB_SVC_EXCHANGE);
     rmProducer.sendJobRequestResponse(rmReturn);
 
-    verify(rabbitTemplate).convertAndSend(eq("rm-jobsvc-exchange"),eq("job.svc.job.response.response"), argumentCaptor.capture());
+    verify(rabbitTemplate).convertAndSend(eq(QueueConfig.RM_JOB_SVC_EXCHANGE),eq(QueueConfig.RM_RESPONSE_ROUTING_KEY), argumentCaptor.capture());
     String result = String.valueOf(argumentCaptor.getValue());
 
     assertEquals(expectedResult, result);

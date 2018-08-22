@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.junit4.SpringRunner;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig;
 import uk.gov.ons.fwmt.fwmtrmadapter.IntegrationTestConfig;
 import uk.gov.ons.fwmt.fwmtrmadapter.helper.TestReceiver;
 
@@ -28,23 +29,16 @@ public class FwmtRmAdapterApplicationTests {
 	private final String EXPECTED_REQUEST_MESSAGE_JSON = "{\"actionType\":\"Cancel\",\"jobIdentity\":\"5a9f4323\",\"reason\":\"deleted for test\"}";
 	private final String JSON = "{\"identity\":\"test\"}";
 	private final String EXPECTED_RESPONSE_MESSAGE_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><DummyRMReturn><identity>test</identity></DummyRMReturn>";
-	private final String EXCHANGE = "rm-jobsvc-exchange";
-	private final String JOB_SVC_ROUTING_KEY = "rm.job.request.create";
-	private final String RM_ROUTING_KEY = "rm.job.response.response";
 
 	@Autowired
 	private RabbitTemplate rabbitTemplate;
 
-	private void before() {
-
-	}
-
 	@Test
-	public void testPathFromRMToJobSvc() throws JAXBException, InterruptedException {
+	public void testPathFromRMToJobSvc() throws InterruptedException {
 
 		TestReceiver testReceiver = new TestReceiver();
 		testReceiver.init();
-		rabbitTemplate.convertAndSend(EXCHANGE ,JOB_SVC_ROUTING_KEY , XML.getBytes());
+		rabbitTemplate.convertAndSend(QueueConfig.RM_JOB_SVC_EXCHANGE, QueueConfig.RM_REQUEST_ROUTING_KEY, XML.getBytes());
 
 		Thread.sleep(2000);
 		assertEquals(1,TestReceiver.counter);
@@ -53,11 +47,11 @@ public class FwmtRmAdapterApplicationTests {
 	}
 
 	@Test
-	public void testPathFromJobSvcToRM() throws JAXBException, InterruptedException {
+	public void testPathFromJobSvcToRM() throws InterruptedException {
 
 		TestReceiver testReceiver = new TestReceiver();
 		testReceiver.init();
-		rabbitTemplate.convertAndSend(EXCHANGE ,RM_ROUTING_KEY , JSON);
+		rabbitTemplate.convertAndSend(QueueConfig.RM_JOB_SVC_EXCHANGE, QueueConfig.JOB_SVC_RESPONSE_ROUTING_KEY, JSON);
 
 		Thread.sleep(2000);
 		assertEquals(1,TestReceiver.counter);
