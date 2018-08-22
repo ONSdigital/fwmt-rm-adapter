@@ -20,17 +20,7 @@ public class IntegrationTestConfig {
       @Qualifier("testListenerAdapter") MessageListenerAdapter listenerAdapter) {
     SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
     container.setConnectionFactory(connectionFactory);
-    container.setQueueNames(adapterToJobSvcQueue);
-    container.setMessageListener(listenerAdapter);
-    return container;
-  }
-
-  @Bean
-  SimpleMessageListenerContainer testResponseContainer(ConnectionFactory connectionFactory,
-      @Qualifier("testListenerAdapter") MessageListenerAdapter listenerAdapter) {
-    SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-    container.setConnectionFactory(connectionFactory);
-    container.setQueueNames(adapterToRMQueue);
+    container.setQueueNames(adapterToJobSvcQueue,adapterToRMQueue);
     container.setMessageListener(listenerAdapter);
     return container;
   }

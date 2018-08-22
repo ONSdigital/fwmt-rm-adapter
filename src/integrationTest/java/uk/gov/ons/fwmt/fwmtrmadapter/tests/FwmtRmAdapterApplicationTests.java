@@ -24,7 +24,13 @@ import static org.junit.Assert.assertEquals;
 @Import({IntegrationTestConfig.class,TestReceiver.class})
 public class FwmtRmAdapterApplicationTests {
 
-
+	private final	String XML = "<ins:actionInstruction xmlns:ins=\"http://ons.gov.uk/ctp/response/action/message/instruction\"><actionCancel><actionId>5a9f4323</actionId><responseRequired>true</responseRequired><reason>deleted for test</reason></actionCancel></ins:actionInstruction>";
+	private final String EXPECTED_REQUEST_MESSAGE_JSON = "{\"actionType\":\"Cancel\",\"jobIdentity\":\"5a9f4323\",\"reason\":\"deleted for test\"}";
+	private final String JSON = "{\"identity\":\"test\"}";
+	private final String EXPECTED_RESPONSE_MESSAGE_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><DummyRMReturn><identity>test</identity></DummyRMReturn>";
+	private final String EXCHANGE = "rm-jobsvc-exchange";
+	private final String JOB_SVC_ROUTING_KEY = "rm.job.request.create";
+	private final String RM_ROUTING_KEY = "rm.job.response.response";
 
 	@Autowired
 	private RabbitTemplate rabbitTemplate;
@@ -38,12 +44,11 @@ public class FwmtRmAdapterApplicationTests {
 
 		TestReceiver testReceiver = new TestReceiver();
 		testReceiver.init();
-		String xml = "<ins:actionInstruction xmlns:ins=\"http://ons.gov.uk/ctp/response/action/message/instruction\"><actionCancel><actionId>5a9f4323</actionId><responseRequired>true</responseRequired><reason>deleted for test</reason></actionCancel></ins:actionInstruction>";
-		rabbitTemplate.convertAndSend("rm-jobsvc-exchange", "rm.job.request.create", xml.getBytes());
+		rabbitTemplate.convertAndSend(EXCHANGE ,JOB_SVC_ROUTING_KEY , XML.getBytes());
 
 		Thread.sleep(2000);
 		assertEquals(1,TestReceiver.counter);
-		assertTrue(TestReceiver.result.equals("{\"actionType\":\"Cancel\",\"jobIdentity\":\"5a9f4323\",\"reason\":\"deleted for test\"}"));
+		assertTrue(TestReceiver.result.equals(EXPECTED_REQUEST_MESSAGE_JSON));
 
 	}
 
@@ -52,12 +57,11 @@ public class FwmtRmAdapterApplicationTests {
 
 		TestReceiver testReceiver = new TestReceiver();
 		testReceiver.init();
-		String JSON = "{\"identity\":\"test\"}";
-		rabbitTemplate.convertAndSend("rm-jobsvc-exchange", "job.svc.job.response.create", JSON);
+		rabbitTemplate.convertAndSend(EXCHANGE ,RM_ROUTING_KEY , JSON);
 
 		Thread.sleep(2000);
 		assertEquals(1,TestReceiver.counter);
-		assertEquals("{\"identity\":\"test\"}",TestReceiver.result);
+		assertEquals(EXPECTED_RESPONSE_MESSAGE_XML,TestReceiver.result);
 
 	}
 
