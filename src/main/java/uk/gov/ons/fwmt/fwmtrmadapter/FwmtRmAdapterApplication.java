@@ -22,53 +22,52 @@ import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.RMReceiverImpl;
 public class FwmtRmAdapterApplication {
 
 	@Bean
-	Queue rmToAdapterQueue() {
+	public Queue rmToAdapterQueue() {
 		return new Queue(QueueConfig.RM_TO_ADAPTER_QUEUE, false);
 	}
 
 	@Bean
-	Queue adapterToJobSvcQueue() {
+	public Queue adapterToJobSvcQueue() {
 		return new Queue(QueueConfig.ADAPTER_TO_JOBSVC_QUEUE, false);
 	}
 
 	@Bean
-	Queue jobSvcToAdapterQueue() {
+	public Queue jobSvcToAdapterQueue() {
 		return new Queue(QueueConfig.JOBSVC_TO_ADAPTER_QUEUE, false);
 	}
 
 	@Bean
-	Queue adapterToRMQueue() {
+	public Queue adapterToRMQueue() {
 		return new Queue(QueueConfig.ADAPTER_TO_RM_QUEUE, false);
 	}
 
 	@Bean
-	TopicExchange exchange() {
+	public TopicExchange exchange() {
 		return new TopicExchange(QueueConfig.RM_JOB_SVC_EXCHANGE);
 	}
 
 	@Bean
-	Binding rmToAdapterBinding(@Qualifier("rmToAdapterQueue") Queue queue, TopicExchange exchange) {
+	public Binding rmToAdapterBinding(@Qualifier("rmToAdapterQueue") Queue queue, TopicExchange exchange) {
 		return BindingBuilder.bind(queue).to(exchange).with(QueueConfig.RM_REQUEST_ROUTING_KEY);
 	}
 
 	@Bean
-	Binding adapterToJobSvcBinding(@Qualifier("adapterToJobSvcQueue") Queue queue, TopicExchange exchange) {
+	public Binding adapterToJobSvcBinding(@Qualifier("adapterToJobSvcQueue") Queue queue, TopicExchange exchange) {
 		return BindingBuilder.bind(queue).to(exchange).with(QueueConfig.JOB_SVC_REQUEST_ROUTING_KEY);
 	}
 
 	@Bean
-	Binding jobSvcToAdapterBinding(@Qualifier("jobSvcToAdapterQueue") Queue queue, TopicExchange exchange) {
+	public Binding jobSvcToAdapterBinding(@Qualifier("jobSvcToAdapterQueue") Queue queue, TopicExchange exchange) {
 		return BindingBuilder.bind(queue).to(exchange).with(QueueConfig.JOB_SVC_RESPONSE_ROUTING_KEY);
 	}
 
 	@Bean
-	//@Qualifier("listenerAdapter")
-	Binding adapterToRMBinding(@Qualifier("adapterToRMQueue") Queue queue, TopicExchange exchange) {
+	public Binding adapterToRMBinding(@Qualifier("adapterToRMQueue") Queue queue, TopicExchange exchange) {
 		return BindingBuilder.bind(queue).to(exchange).with(QueueConfig.RM_RESPONSE_ROUTING_KEY);
 	}
 
 	@Bean
-	SimpleMessageListenerContainer container(ConnectionFactory connectionFactory,
+	public SimpleMessageListenerContainer container(ConnectionFactory connectionFactory,
 			@Qualifier("listenerAdapter") MessageListenerAdapter listenerAdapter) {
 		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
@@ -77,7 +76,8 @@ public class FwmtRmAdapterApplication {
 		return container;
 	}
 
-	@Bean ObjectMapper objectMapper() {
+	@Bean
+	public ObjectMapper objectMapper() {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(new JavaTimeModule());
 		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -85,13 +85,12 @@ public class FwmtRmAdapterApplication {
 	}
 
 	@Bean
-//	@Qualifier("listenerAdapter")
-	MessageListenerAdapter listenerAdapter(RMReceiverImpl receiver) {
+	public MessageListenerAdapter listenerAdapter(RMReceiverImpl receiver) {
 		return new MessageListenerAdapter(receiver, "receiveMessage");
 	}
 
 	@Bean
-	SimpleMessageListenerContainer jobSvcContainer(ConnectionFactory connectionFactory,
+	public SimpleMessageListenerContainer jobSvcContainer(ConnectionFactory connectionFactory,
 			@Qualifier("jobSvcListenerAdapter") MessageListenerAdapter listenerAdapter) {
 		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
@@ -101,7 +100,7 @@ public class FwmtRmAdapterApplication {
 	}
 
 	@Bean
-	MessageListenerAdapter jobSvcListenerAdapter(JobServiceReceiverImpl receiver) {
+	public MessageListenerAdapter jobSvcListenerAdapter(JobServiceReceiverImpl receiver) {
 		return new MessageListenerAdapter(receiver, "receiveMessage");
 	}
 

@@ -18,9 +18,10 @@ public class JobServiceReceiverImpl implements JobSvcReceiver {
 
 
   @Autowired
-  RMAdapterService rmAdapterService;
+  private RMAdapterService rmAdapterService;
+
   @Autowired
-  ObjectMapper objectMapper;
+  private ObjectMapper objectMapper;
 
   public void receiveMessage(String returnJobRequestXML) {
 

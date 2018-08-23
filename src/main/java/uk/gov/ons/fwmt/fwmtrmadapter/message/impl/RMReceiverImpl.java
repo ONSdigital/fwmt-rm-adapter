@@ -19,9 +19,9 @@ import java.io.ByteArrayInputStream;
 public class RMReceiverImpl implements RMReceiver {
 
   @Autowired
-  RMAdapterService rmAdapterService;
+  private RMAdapterService rmAdapterService;
 
- public void receiveMessage(byte[] createJobRequestXML) throws JAXBException {
+  public void receiveMessage(byte[] createJobRequestXML) throws JAXBException {
 
     log.info(new String(createJobRequestXML));
     JAXBContext jaxbContext = JAXBContext.newInstance(ActionInstruction.class);
