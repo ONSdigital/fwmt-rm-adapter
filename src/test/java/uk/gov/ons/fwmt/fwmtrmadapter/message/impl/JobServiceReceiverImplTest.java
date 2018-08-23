@@ -6,11 +6,10 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.DummyTMResponse;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.data.DummyTMResponse;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.types.FWMTCommonException;
 import uk.gov.ons.fwmt.fwmtrmadapter.service.RMAdapterService;
 
-import java.io.IOError;
 import java.io.IOException;
 
 import static org.junit.Assert.fail;

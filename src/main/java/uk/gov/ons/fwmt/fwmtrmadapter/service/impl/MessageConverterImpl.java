@@ -4,10 +4,10 @@ import org.springframework.stereotype.Component;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionAddress;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.Address;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTCancelJobRequest;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTCreateJobRequest;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTUpdateJobRequest;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.data.Address;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTCancelJobRequest;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTCreateJobRequest;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTUpdateJobRequest;
 import uk.gov.ons.fwmt.fwmtrmadapter.service.MessageConverter;
 
 import java.time.LocalDate;
