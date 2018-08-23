@@ -1,4 +1,4 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/84861e6c2b77414983539c166b311ee2)](https://www.codacy.com/app/kieran.wardle/fwmt-rm-adapter?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ONSdigital/fwmt-rm-adapter&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/ONSdigital/fwmt-rm-adapter.svg?branch=master)](https://travis-ci.org/ONSdigital/fwmt-rm-adapter) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/84861e6c2b77414983539c166b311ee2)](https://www.codacy.com/app/kieran.wardle/fwmt-rm-adapter?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ONSdigital/fwmt-rm-adapter&amp;utm_campaign=Badge_Grade)
 
 # fwmt-rm-adapter
 
