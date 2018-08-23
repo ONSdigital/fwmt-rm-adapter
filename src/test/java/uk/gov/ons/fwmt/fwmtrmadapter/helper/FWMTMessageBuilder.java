@@ -1,7 +1,7 @@
 package uk.gov.ons.fwmt.fwmtrmadapter.helper;
 
-import uk.gov.ons.fwmt.fwmtgatewaycommon.Address;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.FWMTCreateJobRequest;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.data.Address;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTCreateJobRequest;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
