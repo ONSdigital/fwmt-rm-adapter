@@ -26,10 +26,6 @@ public class RMProducerImpl implements RMProducer {
   private RabbitTemplate rabbitTemplate;
 
   @Autowired
-  @Qualifier("adapterToRMQueue")
-  private Queue queue;
-
-  @Autowired
   private Exchange exchange;
 
   public void sendJobRequestResponse(DummyRMReturn dummyRMReturn) {

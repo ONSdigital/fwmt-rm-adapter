@@ -16,13 +16,13 @@ import uk.gov.ons.fwmt.fwmtrmadapter.service.RMAdapterService;
 public class RMAdapterServiceImpl implements RMAdapterService {
 
   @Autowired
-  JobServiceProducer jobServiceProducer;
+  private JobServiceProducer jobServiceProducer;
 
   @Autowired
-  MessageConverter messageConverter;
+  private MessageConverter messageConverter;
 
   @Autowired
-  RMProducer rmProducer;
+  private RMProducer rmProducer;
 
 
   public void sendJobRequest(ActionInstruction actionInstruction) {
