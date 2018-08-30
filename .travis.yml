@@ -26,5 +26,5 @@ after_script:
   docker build -t fwmtrmadapter --build-arg jar=build/libs/fwmt-rm-adapter-*.jar .;
   docker tag fwmtrmadapter sdcplatform/fwmtrmadapter:$TRAVIS_BUILD_NUMBER;
   docker push sdcplatform/fwmtrmadapter;
-  ./gradlew artifactDeploy;
+  ./gradlew artifactPublish;
   fi
