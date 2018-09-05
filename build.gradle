@@ -1,12 +1,17 @@
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.testing.Test
+
 buildscript {
 	ext {
 		springBootVersion = '2.0.4.RELEASE'
 	}
 	repositories {
 		mavenCentral()
+		jcenter()
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath "org.jfrog.buildinfo:build-info-extractor-gradle:latest.release"
 	}
 }
 
@@ -16,6 +21,8 @@ apply plugin: 'maven-publish'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'jacoco'
+apply plugin: 'com.jfrog.artifactory'
 
 group = 'uk.gov.ons.fwmt'
 version = '0.0.1-SNAPSHOT'
@@ -25,11 +32,12 @@ repositories {
 	maven { url "http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot-local" }
 	maven { url "http://artifactory-sdc.onsdigital.uk/artifactory/libs-release-local" }
 	mavenCentral()
-	mavenLocal()
 }
 
 configurations {
 	jaxb
+	integrationTestCompile.extendsFrom testCompile
+	integrationTestRuntime.extendsFrom testRuntime
 }
 
 task genJaxb {
@@ -74,6 +82,87 @@ bootJar {
 	version =  version
 }
 
+sourceSets {
+	integrationTest {
+		java {
+			compileClasspath += main.output
+			runtimeClasspath += main.output
+			srcDir file('src/integration-test/java')
+		}
+		resources.srcDir file('src/integration-test/resources')
+	}
+}
+
+test {
+	jacoco {
+		destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+		classDumpDir = file("$buildDir/jacoco/classpathdumps")
+	}
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled true
+		html.enabled false
+	}
+//	afterEvaluate {
+//		classDirectories = files(classDirectories.files.collect {
+//			fileTree(dir: it, exclude: [
+//					'**/legacy_ingest/*',
+//					'**/dto/*',
+//					'**/data/tm/*',
+//					'**/config/*',
+//					'**/CSVParseFinalResult.java',
+//					'**/ApplicationConfig.java',
+//					'**/WebConfig.java'
+//			])
+//		})
+//	}
+}
+test.finalizedBy(project.tasks.jacocoTestReport)
+
+check.dependsOn jacocoTestReport
+
+task integrationTest(type: Test) {
+	jacoco {
+		destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+		classDumpDir = file("$buildDir/jacoco/classpathdumps")
+	}
+	testClassesDirs = sourceSets.integrationTest.output.classesDirs
+	classpath = sourceSets.integrationTest.runtimeClasspath
+	outputs.upToDateWhen { false }
+}
+check.dependsOn integrationTest
+check.dependsOn jacocoTestReport
+integrationTest.mustRunAfter test
+
+artifactory {
+	contextUrl = System.getenv('ARTIFACTORY_URL')
+	publish {
+		repository {
+			repoKey = 'libs-snapshot-local'
+			username = System.getenv('ARTIFACTORY_USERNAME')
+			password = System.getenv('ARTIFACTORY_PASSWORD')
+		}
+	}
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			groupId = group
+			artifactId = 'fwmt-rm-adapter'
+			version = version
+
+			from components.java
+		}
+	}
+}
+
+artifactoryPublish {
+	publications ('maven')
+}
+
 
 dependencies {
 	compile(files(genJaxb.classesDir).builtBy(genJaxb))
@@ -86,4 +175,8 @@ dependencies {
 	compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.5'
 	compile group: 'org.json', name: 'json', version: '20180130'
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+
+	integrationTestCompile 'org.assertj:assertj-core:3.0.0'
+
+	integrationTestRuntime group: 'uk.gov.ons.fwmt', name: 'fwmt-service-mocks', version: '1.0.1-SNAPSHOT'
 }

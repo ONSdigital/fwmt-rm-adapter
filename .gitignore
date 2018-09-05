@@ -34,3 +34,6 @@ local.properties
 .recommenders
 .project
 .classpath
+classes/*
+out/*
+target/*

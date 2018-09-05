@@ -7,6 +7,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.ExceptionCode;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.types.FWMTCommonException;
 import uk.gov.ons.fwmt.fwmtrmadapter.data.DummyRMReturn;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.RMProducer;
 
@@ -23,10 +26,6 @@ public class RMProducerImpl implements RMProducer {
   private RabbitTemplate rabbitTemplate;
 
   @Autowired
-  @Qualifier("adapterToRMQueue")
-  private Queue queue;
-
-  @Autowired
   private Exchange exchange;
 
   public void sendJobRequestResponse(DummyRMReturn dummyRMReturn) {
@@ -39,16 +38,11 @@ public class RMProducerImpl implements RMProducer {
       marshaller.marshal(dummyRMReturn, sw);
       String rmJobRequestResponse = sw.toString();
 
-      rabbitTemplate.convertAndSend(exchange.getName(), "job.svc.job.response.response", rmJobRequestResponse);
-      log.info(new String("POSTING TO RM" +rmJobRequestResponse));
-
+      log.info("POSTING TO RM" + rmJobRequestResponse);
+      rabbitTemplate.convertAndSend(exchange.getName(), QueueConfig.RM_RESPONSE_ROUTING_KEY, rmJobRequestResponse);
     } catch (JAXBException e) {
-      e.printStackTrace();
+      throw new FWMTCommonException(ExceptionCode.INVALID_TM_RESPONSE,"Error marshalling the TM response", e);
     }
-
-
   }
-
-
 
 }
