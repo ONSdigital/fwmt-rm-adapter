@@ -79,7 +79,7 @@ task genJaxb {
 
 bootJar {
 	baseName = 'fwmt-rm-adapter'
-	version = version
+	version =  version
 }
 
 sourceSets {
