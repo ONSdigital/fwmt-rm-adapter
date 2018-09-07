@@ -7,7 +7,7 @@ before_install:
 install: true
 script:
 - "if [[ $TRAVIS_COMMIT_MESSAGE != 'JENKINS SNAPSHOT UPDATE' ]];
-  then ./gradlew check --info;
+  then ./gradlew build --info;
   fi"
 env:
   global:
