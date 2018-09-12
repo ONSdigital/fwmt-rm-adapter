@@ -82,8 +82,9 @@ task genJaxb {
 	}
 }
 
-bootJar {
+jar {
 	baseName = 'fwmt-rm-adapter'
+	group = 'uk.gov.ons.fwmt'
 	version =  version
 	manifest {
 		attributes(["Git-Commit": repo.head().getAbbreviatedId(8),
