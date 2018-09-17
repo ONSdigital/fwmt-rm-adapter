@@ -29,7 +29,7 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'org.ajoberstar.grgit'
 
 group = 'uk.gov.ons.fwmt'
-version = '0.0.3-SNAPSHOT'
+version = '0.0.2-SNAPSHOT'
 sourceCompatibility = 1.8
 def repo = Grgit.open('.')
 
@@ -86,6 +86,7 @@ jar {
 	baseName = 'fwmt-rm-adapter'
 	group = 'uk.gov.ons.fwmt'
 	version =  version
+	enabled = true
 	manifest {
 		attributes(["Git-Commit": repo.head().getAbbreviatedId(8),
 					"Git-Branch": repo.branch.getCurrent().getName() ], "common")
