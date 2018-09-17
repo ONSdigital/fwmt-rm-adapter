@@ -86,11 +86,11 @@ jar {
 	baseName = 'fwmt-rm-adapter'
 	group = 'uk.gov.ons.fwmt'
 	version =  version
-	enabled = true
 	manifest {
 		attributes(["Git-Commit": repo.head().getAbbreviatedId(8),
 					"Git-Branch": repo.branch.getCurrent().getName() ], "common")
 	}
+	from sourceSets.main.output
 }
 
 sourceSets {
