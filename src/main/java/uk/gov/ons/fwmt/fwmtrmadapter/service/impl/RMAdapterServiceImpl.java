@@ -3,6 +3,7 @@ package uk.gov.ons.fwmt.fwmtrmadapter.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.DummyTMResponse;
 import uk.gov.ons.fwmt.fwmtrmadapter.data.DummyRMReturn;
@@ -24,8 +25,7 @@ public class RMAdapterServiceImpl implements RMAdapterService {
   @Autowired
   private RMProducer rmProducer;
 
-
-  public void sendJobRequest(ActionInstruction actionInstruction) {
+  public void sendJobRequest(ActionInstruction actionInstruction) throws CTPException {
     if (actionInstruction.getActionRequest() != null) {
       jobServiceProducer.sendMessage(messageConverter.createJob(actionInstruction));
     }
@@ -37,7 +37,7 @@ public class RMAdapterServiceImpl implements RMAdapterService {
     }
   }
 
-  public void returnJobRequest(DummyTMResponse response) {
+  public void returnJobRequest(DummyTMResponse response) throws CTPException {
     DummyRMReturn returnMsg = convertTMResponse(response);
     rmProducer.sendJobRequestResponse(returnMsg);
 

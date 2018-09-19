@@ -13,8 +13,6 @@ import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig;
 import uk.gov.ons.fwmt.fwmtrmadapter.IntegrationTestConfig;
 import uk.gov.ons.fwmt.fwmtrmadapter.helper.TestReceiver;
 
-import javax.xml.bind.JAXBException;
-
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
@@ -43,7 +41,6 @@ public class FwmtRmAdapterApplicationTests {
 		Thread.sleep(2000);
 		assertEquals(1,TestReceiver.counter);
 		assertTrue(TestReceiver.result.equals(EXPECTED_REQUEST_MESSAGE_JSON));
-
 	}
 
 	@Test
@@ -56,7 +53,5 @@ public class FwmtRmAdapterApplicationTests {
 		Thread.sleep(2000);
 		assertEquals(1,TestReceiver.counter);
 		assertEquals(EXPECTED_RESPONSE_MESSAGE_XML,TestReceiver.result);
-
 	}
-
 }

@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.DummyTMResponse;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTCancelJobRequest;
@@ -41,7 +42,7 @@ public class RMAdapterServiceImplTest {
   private ArgumentCaptor argCaptor;
 
   @Test
-  public void sendCreateJobRequest() {
+  public void sendCreateJobRequest() throws CTPException {
     //Given
     ActionInstructionBuilder actionInstructionBuilder = new ActionInstructionBuilder();
     ActionInstruction actionInstruction = actionInstructionBuilder.createActionInstructionBuilder();
@@ -57,7 +58,7 @@ public class RMAdapterServiceImplTest {
 
   //  @Ignore("Code to update needs to be written")
   @Test
-  public void sendUpdateJobRequest() {
+  public void sendUpdateJobRequest() throws CTPException {
     //Given
     ActionInstructionBuilder actionInstructionBuilder = new ActionInstructionBuilder();
     ActionInstruction actionInstruction = actionInstructionBuilder.updateActionInstructionBuilder();
@@ -72,7 +73,7 @@ public class RMAdapterServiceImplTest {
   }
 
   @Test
-  public void sendCancelJobRequest() {
+  public void sendCancelJobRequest() throws CTPException {
     //Given
     ActionInstructionBuilder actionInstructionBuilder = new ActionInstructionBuilder();
     ActionInstruction actionInstruction = actionInstructionBuilder.cancelActionInstructionBuilder();
@@ -87,7 +88,7 @@ public class RMAdapterServiceImplTest {
   }
 
   @Test
-  public void returnJobRequest() {
+  public void returnJobRequest() throws CTPException {
     //Given
     DummyTMResponse response = new DummyTMResponse();
     response.setIdentity("dummy");
@@ -112,6 +113,5 @@ public class RMAdapterServiceImplTest {
 
     //Then
     assertEquals(response.getIdentity(), rmReturn.getIdentity());
-
   }
 }

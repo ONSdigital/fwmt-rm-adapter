@@ -11,20 +11,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.ExceptionCode;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.types.FWMTCommonException;
 import uk.gov.ons.fwmt.fwmtrmadapter.data.DummyRMReturn;
 
-import javax.xml.bind.JAXBException;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -47,7 +39,7 @@ public class RMProducerImplTest {
   public ExpectedException expectedException = ExpectedException.none();
 
   @Test
-  public void sendJobRequestResponse() {
+  public void sendJobRequestResponse() throws CTPException {
 
     DummyRMReturn rmReturn = new DummyRMReturn();
     rmReturn.setIdentity("testIdentity");
@@ -62,6 +54,7 @@ public class RMProducerImplTest {
 
   }
 
+  // TODO fix or delete
 //  @Test(expected = FWMTCommonException.class)
 //  public void sendBadJobRequestResponse() {
 //

@@ -178,6 +178,9 @@ artifactoryPublish {
 dependencies {
 	compile(files(genJaxb.classesDir).builtBy(genJaxb))
 	jaxb "com.sun.xml.bind:jaxb-xjc:2.1.7"
+	compile ('uk.gov.ons.ctp.common:framework:10.49.17') {
+		exclude(group: "net.sourceforge.cobertura", module: "cobertura")
+	}
 	compile group: 'org.projectlombok', name: 'lombok', version: '1.16.8'
 	compile group: 'uk.gov.ons.fwmt', name: 'fwmt-gateway-common', version: '0.0.1-SNAPSHOT'
 	compile("org.springframework.boot:spring-boot-starter-amqp")
