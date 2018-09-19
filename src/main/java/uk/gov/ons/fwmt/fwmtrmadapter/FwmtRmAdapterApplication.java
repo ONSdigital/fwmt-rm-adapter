@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
@@ -21,24 +22,29 @@ import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.RMReceiverImpl;
 @SpringBootApplication
 public class FwmtRmAdapterApplication {
 
+  public static final String DEAD_LETTER_QUEUE_NAME = "adapter-jobSvc.DLQ";
+
 	@Bean
 	public Queue rmToAdapterQueue() {
-		return new Queue(QueueConfig.RM_TO_ADAPTER_QUEUE, false);
+    return new Queue(QueueConfig.RM_TO_ADAPTER_QUEUE, true);
 	}
 
 	@Bean
 	public Queue adapterToJobSvcQueue() {
-		return new Queue(QueueConfig.ADAPTER_TO_JOBSVC_QUEUE, false);
-	}
+    return QueueBuilder.durable(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.ADAPTER_TO_JOBSVC_QUEUE)
+        .withArgument("x-dead-letter-exchange", "")
+        .withArgument("x-dead-letter-routing-key", DEAD_LETTER_QUEUE_NAME)
+        .build();
+  }
 
 	@Bean
 	public Queue jobSvcToAdapterQueue() {
-		return new Queue(QueueConfig.JOBSVC_TO_ADAPTER_QUEUE, false);
+    return new Queue(QueueConfig.JOBSVC_TO_ADAPTER_QUEUE, true);
 	}
 
 	@Bean
 	public Queue adapterToRMQueue() {
-		return new Queue(QueueConfig.ADAPTER_TO_RM_QUEUE, false);
+    return new Queue(QueueConfig.ADAPTER_TO_RM_QUEUE, true);
 	}
 
 	@Bean
