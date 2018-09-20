@@ -24,6 +24,7 @@ notifications:
   slack:
     secure: B24srxRxVVx2NcqATpy82YYzL794ZTn4/xn8DprYEtLJlksYNK2aedoK2Xn5OkaFA9yEmxWkvE59jZnhMR6qeFKC7pihTvg1DlJyG9lkhUcWM3BjggUC1R1uDmrRx3l1jyihlpBeNGS6Q8bdUP9JZnVxY0IizK2x+jVBNgfIdpSVz5crgp5uvuwdoxTcpEqDDI+TQliNTjYTZCTOPR06WoBiimg1cXMVAE7kehfphQiOaxfAg5NVv7esuP9xckOOp8zY3Le+Z7NUy64VgogTetQVezxmFKaVtuY1wqnKqauLlohISeLyEhPDefjCXiT6o2V2c82Rahl6g/1D/NqrxurfqQmTTm8hVBVwSDc6frjvZR86IbNa8qGDL4VR8bZuQQtClsraj4Tw121cymEKlJD0MNXUgP77zttYt5RNEiqTP0sBsK579FhH84e7EK3MkWmhb2oQt8+jTqja9PPMZiGkE//ZYN/JxCGfoTOSdnewk3AcCKtf9azHHkkg6Iukew3HNvl+keBUiGBqgDAcYF/Zgrf18yiW1VsA+1tQSoJGpAze886Ld4d4efiiQhTohpwbnd5yK/Zk+d9k5zARbYTwWZyYSnkCmtFox73e1wT/Y9i2+2nBZuGK7dMEgkvf5Z6p7mb2215WiUke30GeT4bqpNPcurjF0AbWjmtbZMc=
 after_success:
+- bash <(curl -s https://codecov.io/bash)
 - if [[ "$TRAVIS_BRANCH" = "master" ]] && [[ "$TRAVIS_PULL_REQUEST" = "false" ]] && [[ $TRAVIS_COMMIT_MESSAGE != "JENKINS SNAPSHOT UPDATE" ]];
   then echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin;
   docker build -t fwmtrmadapter --build-arg jar=build/libs/fwmt-rm-adapter-*.jar .;
