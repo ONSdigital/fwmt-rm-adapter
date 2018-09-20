@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig;
@@ -25,6 +26,7 @@ public class RMProducerImpl implements RMProducer {
   @Autowired
   private Exchange exchange;
 
+  @Retryable
   public void sendJobRequestResponse(DummyRMReturn dummyRMReturn) throws CTPException {
     JAXBContext jaxbContext;
     try {

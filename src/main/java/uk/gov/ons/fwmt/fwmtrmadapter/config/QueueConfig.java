@@ -11,34 +11,70 @@ import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.backoff.ExponentialBackOffPolicy;
+import org.springframework.retry.support.RetryTemplate;
+import uk.gov.ons.ctp.common.retry.CTPRetryPolicy;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.JobServiceReceiverImpl;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.RMReceiverImpl;
+import uk.gov.ons.fwmt.fwmtrmadapter.retrysupport.DefaultListenerSupport;
 
 @Configuration
 public class QueueConfig {
-  private static final String DEAD_LETTER_QUEUE_NAME = "adapter-jobSvc.DLQ";
+  private static final String ADAPTER_JOB_SVC_DLQ = "adapter-jobSvc.DLQ";
+  private static final String JOB_SVC_ADAPTER_DLQ = "jobSvc-adapter.DLQ";
+  private static final String RM_ADAPTER_DLQ = "rm-adapter.DLQ";
+  private static final String ADAPTER_RM_DLQ = "adapter-rm.DLQ";
 
   @Bean
   public Queue rmToAdapterQueue() {
-    return new Queue(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.RM_TO_ADAPTER_QUEUE, true);
+    return QueueBuilder.durable(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.RM_TO_ADAPTER_QUEUE)
+        .withArgument("x-dead-letter-exchange", "")
+        .withArgument("x-dead-letter-routing-key", RM_ADAPTER_DLQ)
+        .build();
   }
 
   @Bean
   public Queue adapterToJobSvcQueue() {
     return QueueBuilder.durable(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.ADAPTER_TO_JOBSVC_QUEUE)
         .withArgument("x-dead-letter-exchange", "")
-        .withArgument("x-dead-letter-routing-key", DEAD_LETTER_QUEUE_NAME)
+        .withArgument("x-dead-letter-routing-key", ADAPTER_JOB_SVC_DLQ)
         .build();
   }
 
   @Bean
   public Queue jobSvcToAdapterQueue() {
-    return new Queue(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.JOBSVC_TO_ADAPTER_QUEUE, true);
+    return QueueBuilder.durable(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.JOBSVC_TO_ADAPTER_QUEUE)
+        .withArgument("x-dead-letter-exchange", "")
+        .withArgument("x-dead-letter-routing-key", JOB_SVC_ADAPTER_DLQ)
+        .build();
   }
 
   @Bean
   public Queue adapterToRMQueue() {
-    return new Queue(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.ADAPTER_TO_RM_QUEUE, true);
+    return QueueBuilder.durable(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.ADAPTER_TO_RM_QUEUE)
+        .withArgument("x-dead-letter-exchange", "")
+        .withArgument("x-dead-letter-routing-key", ADAPTER_RM_DLQ)
+        .build();
+  }
+
+  @Bean
+  Queue adapterDeadLetterQueue() {
+    return QueueBuilder.durable(ADAPTER_JOB_SVC_DLQ).build();
+  }
+
+  @Bean
+  Queue jobSvsDeadLetterQueue() {
+    return QueueBuilder.durable(JOB_SVC_ADAPTER_DLQ).build();
+  }
+
+  @Bean
+  Queue rmAdapterDeadLetterQueue() {
+    return QueueBuilder.durable(RM_ADAPTER_DLQ).build();
+  }
+
+  @Bean
+  Queue adapterRmDeadLetterQueue() {
+    return QueueBuilder.durable(ADAPTER_RM_DLQ).build();
   }
 
   @Bean
@@ -98,5 +134,23 @@ public class QueueConfig {
     container.setQueueNames(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.JOBSVC_TO_ADAPTER_QUEUE);
     container.setMessageListener(listenerAdapter);
     return container;
+  }
+
+  @Bean
+  public RetryTemplate retryTemplate() {
+    RetryTemplate retryTemplate = new RetryTemplate();
+
+    ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();
+    backOffPolicy.setInitialInterval(5000);
+    backOffPolicy.setMultiplier(3.0);
+    backOffPolicy.setMaxInterval(45000);
+    retryTemplate.setBackOffPolicy(backOffPolicy);
+
+    CTPRetryPolicy ctpRetryPolicy = new CTPRetryPolicy();
+    retryTemplate.setRetryPolicy(ctpRetryPolicy);
+
+    retryTemplate.registerListener(new DefaultListenerSupport());
+
+    return retryTemplate;
   }
 }

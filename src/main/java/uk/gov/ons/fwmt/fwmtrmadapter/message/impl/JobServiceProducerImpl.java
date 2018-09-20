@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig;
@@ -24,6 +25,7 @@ public class JobServiceProducerImpl implements JobServiceProducer {
   @Autowired
   private ObjectMapper objectMapper;
 
+  @Retryable
   public void sendMessage(Object dto) throws CTPException {
     String JSONJobRequest = convertToJSON(dto);
     rabbitTemplate.convertAndSend(exchange.getName(), QueueConfig.JOB_SVC_REQUEST_ROUTING_KEY, JSONJobRequest);
