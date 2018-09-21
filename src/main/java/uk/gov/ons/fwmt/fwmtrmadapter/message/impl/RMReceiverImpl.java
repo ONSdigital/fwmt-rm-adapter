@@ -25,30 +25,24 @@ public class RMReceiverImpl implements RMReceiver {
 
   @Retryable
   public void receiveMessage(byte[] createJobRequestXML) throws CTPException {
-    JAXBContext jaxbContext;
     try {
-      jaxbContext = JAXBContext.newInstance(ActionInstruction.class);
-    } catch (JAXBException e) {
-      throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed to create new instance of ActionInstruction.");
-    }
-    Unmarshaller unmarshaller;
-    try {
-      unmarshaller = jaxbContext.createUnmarshaller();
-    } catch (JAXBException e) {
-      throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed unmarshal XML.");
-    }
+      JAXBContext jaxbContext;
 
-    ByteArrayInputStream input = new ByteArrayInputStream(createJobRequestXML);
-    JAXBElement<ActionInstruction> rmActionInstruction;
-    try {
+      jaxbContext = JAXBContext.newInstance(ActionInstruction.class);
+
+      Unmarshaller unmarshaller;
+
+      unmarshaller = jaxbContext.createUnmarshaller();
+
+      ByteArrayInputStream input = new ByteArrayInputStream(createJobRequestXML);
+      JAXBElement<ActionInstruction> rmActionInstruction;
+
       rmActionInstruction = unmarshaller.unmarshal(new StreamSource(input), ActionInstruction.class);
-    } catch (JAXBException e) {
-      throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed to create ActionInstruction.");
-    }
-    try {
+
       rmAdapterService.sendJobRequest(rmActionInstruction.getValue());
+
     } catch (JAXBException e) {
-      throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed to send job request.");
+      throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed to unmarshal XML message.", e);
     }
   }
 }
