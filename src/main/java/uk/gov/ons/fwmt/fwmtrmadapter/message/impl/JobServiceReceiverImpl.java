@@ -25,15 +25,12 @@ public class JobServiceReceiverImpl implements JobSvcReceiver {
 
   @Retryable
   public void receiveMessage(String returnJobRequestXML) throws CTPException {
-
-    log.info("Received Message:{}", returnJobRequestXML);
-
     try {
       final DummyTMResponse response = objectMapper.readValue(returnJobRequestXML, DummyTMResponse.class);
       rmAdapterService.returnJobRequest(response);
 
     } catch (IOException e) {
-      throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed to map response.");
+      throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed to map response.", e);
     }
   }
 }

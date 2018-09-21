@@ -53,18 +53,4 @@ public class RMProducerImplTest {
     assertEquals(expectedResult, result);
 
   }
-
-  // TODO fix or delete
-//  @Test(expected = FWMTCommonException.class)
-//  public void sendBadJobRequestResponse() {
-//
-//    DummyRMReturn dummyRMReturn =  new DummyRMReturn();
-//    dummyRMReturn.setIdentity("Test");
-//
-//    doThrow(JAXBException.class).when(rabbitTemplate).convertAndSend(eq("exchangeName"),eq("job.svc.job.response.response"),anyString());
-//
-//    rmProducer.sendJobRequestResponse(dummyRMReturn);
-//
-//  }
-
 }

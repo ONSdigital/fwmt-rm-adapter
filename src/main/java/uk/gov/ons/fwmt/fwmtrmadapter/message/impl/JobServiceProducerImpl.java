@@ -38,7 +38,7 @@ public class JobServiceProducerImpl implements JobServiceProducer {
       JSONJobRequest = objectMapper.writeValueAsString(dto);
       log.info("CreateJobRequest: " + JSONJobRequest);
     } catch (JsonProcessingException e) {
-      throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed to process JSON.");
+      throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed to process JSON.", e);
     }
     return JSONJobRequest;
   }

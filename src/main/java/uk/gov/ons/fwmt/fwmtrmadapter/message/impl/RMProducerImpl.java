@@ -37,10 +37,9 @@ public class RMProducerImpl implements RMProducer {
       marshaller.marshal(dummyRMReturn, sw);
       String rmJobRequestResponse = sw.toString();
 
-      log.info("POSTING TO RM" + rmJobRequestResponse);
       rabbitTemplate.convertAndSend(exchange.getName(), QueueConfig.RM_RESPONSE_ROUTING_KEY, rmJobRequestResponse);
     } catch (JAXBException e) {
-      throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed to convert and send to RM.");
+      throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed to convert and send to RM.", e);
     }
   }
 }
