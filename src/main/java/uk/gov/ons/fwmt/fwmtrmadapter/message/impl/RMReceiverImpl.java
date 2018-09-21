@@ -26,7 +26,7 @@ public class RMReceiverImpl implements RMReceiver {
   @Retryable
   public void receiveMessage(byte[] createJobRequestXML) throws CTPException {
     try {
-      JAXBContext jaxbContextt = JAXBContext.newInstance(ActionInstruction.class);
+      JAXBContext jaxbContext = JAXBContext.newInstance(ActionInstruction.class);
       Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
       ByteArrayInputStream input = new ByteArrayInputStream(createJobRequestXML);
       JAXBElement<ActionInstruction> rmActionInstruction = unmarshaller.unmarshal(new StreamSource(input), ActionInstruction.class);
