@@ -26,24 +26,13 @@ public class RMReceiverImpl implements RMReceiver {
   @Retryable
   public void receiveMessage(byte[] createJobRequestXML) throws CTPException {
     try {
-      JAXBContext jaxbContext;
-
-      jaxbContext = JAXBContext.newInstance(ActionInstruction.class);
-
-      Unmarshaller unmarshaller;
-
-      unmarshaller = jaxbContext.createUnmarshaller();
-
+      JAXBContext jaxbContextt = JAXBContext.newInstance(ActionInstruction.class);
+      Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
       ByteArrayInputStream input = new ByteArrayInputStream(createJobRequestXML);
-      JAXBElement<ActionInstruction> rmActionInstruction;
-
-      rmActionInstruction = unmarshaller.unmarshal(new StreamSource(input), ActionInstruction.class);
-
+      JAXBElement<ActionInstruction> rmActionInstruction = unmarshaller.unmarshal(new StreamSource(input), ActionInstruction.class);
       rmAdapterService.sendJobRequest(rmActionInstruction.getValue());
-
     } catch (JAXBException e) {
       throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed to unmarshal XML message.", e);
     }
   }
 }
-
