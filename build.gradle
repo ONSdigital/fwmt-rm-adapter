@@ -178,9 +178,6 @@ artifactoryPublish {
 dependencies {
 	compile(files(genJaxb.classesDir).builtBy(genJaxb))
 	jaxb "com.sun.xml.bind:jaxb-xjc:2.1.7"
-	compile ('uk.gov.ons.ctp.common:framework:10.49.17') {
-		exclude(group: "net.sourceforge.cobertura", module: "cobertura")
-	}
     compile group: 'org.springframework.retry', name: 'spring-retry', version: '1.2.2.RELEASE'
     compile group: 'org.springframework', name: 'spring-aop', version: '5.0.8.RELEASE'
 	compile group: 'org.projectlombok', name: 'lombok', version: '1.16.8'

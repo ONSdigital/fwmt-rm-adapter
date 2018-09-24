@@ -2,10 +2,9 @@ package uk.gov.ons.fwmt.fwmtrmadapter.message.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
+import uk.gov.ons.fwmt.fwmtrmadapter.common.error.CTPException;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.RMReceiver;
 import uk.gov.ons.fwmt.fwmtrmadapter.service.RMAdapterService;
 
@@ -23,7 +22,6 @@ public class RMReceiverImpl implements RMReceiver {
   @Autowired
   private RMAdapterService rmAdapterService;
 
-  @Retryable
   public void receiveMessage(byte[] createJobRequestXML) throws CTPException {
     try {
       JAXBContext jaxbContext = JAXBContext.newInstance(ActionInstruction.class);

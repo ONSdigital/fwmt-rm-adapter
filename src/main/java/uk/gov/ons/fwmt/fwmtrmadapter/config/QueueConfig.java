@@ -1,5 +1,6 @@
 package uk.gov.ons.fwmt.fwmtrmadapter.config;
 
+import org.aopalliance.aop.Advice;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -11,9 +12,12 @@ import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.RetryOperations;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
+import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 import org.springframework.retry.support.RetryTemplate;
-import uk.gov.ons.ctp.common.retry.CTPRetryPolicy;
+import uk.gov.ons.fwmt.fwmtrmadapter.common.retry.CTPRetryPolicy;
+import uk.gov.ons.fwmt.fwmtrmadapter.common.retry.CustomMessageRecover;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.JobServiceReceiverImpl;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.RMReceiverImpl;
 import uk.gov.ons.fwmt.fwmtrmadapter.retrysupport.DefaultListenerSupport;
@@ -117,13 +121,25 @@ public class QueueConfig {
   }
 
   @Bean
-  public SimpleMessageListenerContainer container(ConnectionFactory connectionFactory,
-      @Qualifier("listenerAdapter") MessageListenerAdapter listenerAdapter) {
+  SimpleMessageListenerContainer container(ConnectionFactory connectionFactory,
+      MessageListenerAdapter listenerAdapter, RetryOperationsInterceptor interceptor) {
     SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+
+    Advice[] adviceChain = {interceptor};
+
+    container.setAdviceChain(adviceChain);
     container.setConnectionFactory(connectionFactory);
     container.setQueueNames(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.RM_TO_ADAPTER_QUEUE);
     container.setMessageListener(listenerAdapter);
     return container;
+  }
+
+  @Bean
+  RetryOperationsInterceptor interceptor(RetryOperations retryTemplate) {
+    RetryOperationsInterceptor interceptor = new RetryOperationsInterceptor();
+    interceptor.setRecoverer(new CustomMessageRecover());
+    interceptor.setRetryOperations(retryTemplate);
+    return interceptor;
   }
 
   @Bean
