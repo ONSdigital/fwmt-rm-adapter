@@ -10,9 +10,8 @@ import uk.gov.ons.ctp.response.action.message.instruction.ActionAddress;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
+import uk.gov.ons.fwmt.fwmtrmadapter.common.error.CTPException;
 import uk.gov.ons.fwmt.fwmtrmadapter.service.impl.RMAdapterServiceImpl;
-
-import javax.xml.bind.JAXBException;
 
 import java.math.BigDecimal;
 
@@ -35,7 +34,7 @@ public class RMReceiverImplTest {
   private final String ACTION_CANCEL_XML = "<ins:actionInstruction xmlns:ins=\"http://ons.gov.uk/ctp/response/action/message/instruction\"><actionCancel><actionId>actionId</actionId><responseRequired>true</responseRequired><reason>Reason</reason></actionCancel></ins:actionInstruction>";
 
   @Test
-  public void receiveMessageCreate() throws JAXBException {
+  public void receiveMessageCreate() throws CTPException {
 
     rmReceiver.receiveMessage(ACTION_REQUEST_XML.getBytes());
 
@@ -73,7 +72,7 @@ public class RMReceiverImplTest {
   }
 
   @Test
-  public void receiveMessageCancel() throws JAXBException {
+  public void receiveMessageCancel() throws CTPException {
 
     rmReceiver.receiveMessage(ACTION_CANCEL_XML.getBytes());
 

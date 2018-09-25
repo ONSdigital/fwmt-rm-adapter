@@ -5,8 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.DummyTMResponse;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.ExceptionCode;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.types.FWMTCommonException;
+import uk.gov.ons.fwmt.fwmtrmadapter.common.error.CTPException;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.JobSvcReceiver;
 import uk.gov.ons.fwmt.fwmtrmadapter.service.RMAdapterService;
 
@@ -23,16 +22,13 @@ public class JobServiceReceiverImpl implements JobSvcReceiver {
   @Autowired
   private ObjectMapper objectMapper;
 
-  public void receiveMessage(String returnJobRequestXML) {
-
-    log.info("Received Message:{}", returnJobRequestXML);
-
+  public void receiveMessage(String returnJobRequestXML) throws CTPException {
     try {
       final DummyTMResponse response = objectMapper.readValue(returnJobRequestXML, DummyTMResponse.class);
       rmAdapterService.returnJobRequest(response);
 
     } catch (IOException e) {
-      throw new FWMTCommonException(ExceptionCode.INVALID_XML,"The XML received could not be marshalled",e);
+      throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed to map response.", e);
     }
   }
 }

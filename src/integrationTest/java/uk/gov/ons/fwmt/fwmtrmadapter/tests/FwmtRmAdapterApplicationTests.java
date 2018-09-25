@@ -9,11 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.junit4.SpringRunner;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames;
 import uk.gov.ons.fwmt.fwmtrmadapter.IntegrationTestConfig;
 import uk.gov.ons.fwmt.fwmtrmadapter.helper.TestReceiver;
-
-import javax.xml.bind.JAXBException;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -38,12 +36,11 @@ public class FwmtRmAdapterApplicationTests {
 
 		TestReceiver testReceiver = new TestReceiver();
 		testReceiver.init();
-		rabbitTemplate.convertAndSend(QueueConfig.RM_JOB_SVC_EXCHANGE, QueueConfig.RM_REQUEST_ROUTING_KEY, XML.getBytes());
+		rabbitTemplate.convertAndSend(QueueNames.RM_JOB_SVC_EXCHANGE, QueueNames.RM_REQUEST_ROUTING_KEY, XML.getBytes());
 
 		Thread.sleep(2000);
 		assertEquals(1,TestReceiver.counter);
 		assertTrue(TestReceiver.result.equals(EXPECTED_REQUEST_MESSAGE_JSON));
-
 	}
 
 	@Test
@@ -51,12 +48,10 @@ public class FwmtRmAdapterApplicationTests {
 
 		TestReceiver testReceiver = new TestReceiver();
 		testReceiver.init();
-		rabbitTemplate.convertAndSend(QueueConfig.RM_JOB_SVC_EXCHANGE, QueueConfig.JOB_SVC_RESPONSE_ROUTING_KEY, JSON);
+		rabbitTemplate.convertAndSend(QueueNames.RM_JOB_SVC_EXCHANGE, QueueNames.JOB_SVC_RESPONSE_ROUTING_KEY, JSON);
 
 		Thread.sleep(2000);
 		assertEquals(1,TestReceiver.counter);
 		assertEquals(EXPECTED_RESPONSE_MESSAGE_XML,TestReceiver.result);
-
 	}
-
 }

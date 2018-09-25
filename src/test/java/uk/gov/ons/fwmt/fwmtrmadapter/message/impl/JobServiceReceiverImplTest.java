@@ -7,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.DummyTMResponse;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.types.FWMTCommonException;
+import uk.gov.ons.fwmt.fwmtrmadapter.common.error.CTPException;
 import uk.gov.ons.fwmt.fwmtrmadapter.service.RMAdapterService;
 
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class JobServiceReceiverImplTest {
   private RMAdapterService rmAdapterService;
 
   @Test
-  public void receiveMessage() throws IOException {
+  public void receiveMessage() throws IOException, CTPException {
     //Given
     String testReturnXML = "returnXML";
     DummyTMResponse expectedDummyTMResponse = new DummyTMResponse();
@@ -43,11 +43,10 @@ public class JobServiceReceiverImplTest {
     verify(rmAdapterService).returnJobRequest(expectedDummyTMResponse);
   }
 
-  @Test(expected = FWMTCommonException.class)
-  public void receiveMessageBadJson() throws IOException, FWMTCommonException {
+  @Test(expected = CTPException.class)
+  public void receiveMessageBadJson() throws IOException, CTPException {
     //Given
     String testReturnXML = "returnXML";
-    DummyTMResponse expectedDummyTMResponse = new DummyTMResponse();
     when(objectMapper.readValue(eq(testReturnXML), eq(DummyTMResponse.class))).thenThrow(new IOException());
 
     //When

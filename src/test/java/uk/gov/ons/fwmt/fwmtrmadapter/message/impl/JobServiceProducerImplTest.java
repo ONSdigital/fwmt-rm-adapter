@@ -11,9 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTCreateJobRequest;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.exceptions.types.FWMTCommonException;
+import uk.gov.ons.fwmt.fwmtrmadapter.common.error.CTPException;
 import uk.gov.ons.fwmt.fwmtrmadapter.helper.FWMTMessageBuilder;
 
 import static org.junit.Assert.assertEquals;
@@ -41,7 +41,7 @@ public class JobServiceProducerImplTest {
   private ObjectMapper objectMapper;
 
   @Test
-  public void sendMessage() throws JsonProcessingException {
+  public void sendMessage() throws JsonProcessingException, CTPException {
     //Given
     FWMTMessageBuilder fwmtMessageBuilder = new FWMTMessageBuilder();
     FWMTCreateJobRequest fwmtCreateJobRequest = fwmtMessageBuilder.buildFWMTCreateJobRequest();
@@ -52,14 +52,14 @@ public class JobServiceProducerImplTest {
     jobServiceProducer.sendMessage(fwmtCreateJobRequest);
 
     //Then
-    verify(rabbitTemplate).convertAndSend(eq("exchange"), eq(QueueConfig.JOB_SVC_REQUEST_ROUTING_KEY), argumentCaptor.capture());
+    verify(rabbitTemplate).convertAndSend(eq("exchange"), eq(QueueNames.JOB_SVC_REQUEST_ROUTING_KEY), argumentCaptor.capture());
     String result = String.valueOf(argumentCaptor.getValue());
 
     assertEquals(expectedJSON, result);
   }
 
   @Test
-  public void convertToJSON() throws JsonProcessingException {
+  public void convertToJSON() throws JsonProcessingException, CTPException {
     //Given
     FWMTMessageBuilder fwmtMessageBuilder = new FWMTMessageBuilder();
     FWMTCreateJobRequest fwmtCreateJobRequest = fwmtMessageBuilder.buildFWMTCreateJobRequest();
@@ -75,8 +75,8 @@ public class JobServiceProducerImplTest {
     assertNotNull(JSONResponce);
   }
 
-  @Test(expected = FWMTCommonException.class)
-  public void sendBadMessage() throws JsonProcessingException {
+  @Test(expected = CTPException.class)
+  public void sendBadMessage() throws JsonProcessingException, CTPException {
     //Given
     FWMTMessageBuilder fwmtMessageBuilder = new FWMTMessageBuilder();
     FWMTCreateJobRequest fwmtCreateJobRequest = fwmtMessageBuilder.buildFWMTCreateJobRequest();
