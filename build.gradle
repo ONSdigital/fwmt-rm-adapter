@@ -34,6 +34,7 @@ sourceCompatibility = 1.8
 def repo = Grgit.open('.')
 
 repositories {
+    mavenLocal()
 	maven { url "http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot-local" }
 	maven { url "http://artifactory-sdc.onsdigital.uk/artifactory/libs-release-local" }
 	mavenCentral()
@@ -181,7 +182,7 @@ dependencies {
     compile group: 'org.springframework.retry', name: 'spring-retry', version: '1.2.2.RELEASE'
     compile group: 'org.springframework', name: 'spring-aop', version: '5.0.8.RELEASE'
 	compile group: 'org.projectlombok', name: 'lombok', version: '1.16.8'
-	compile group: 'uk.gov.ons.fwmt', name: 'fwmt-gateway-common', version: '0.0.1-SNAPSHOT'
+    compile group: 'uk.gov.ons.fwmt', name: 'fwmt-gateway-common', version: '0.0.2-SNAPSHOT'
 	compile("org.springframework.boot:spring-boot-starter-amqp")
 	compile('org.springframework.boot:spring-boot-starter')
 	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.5'

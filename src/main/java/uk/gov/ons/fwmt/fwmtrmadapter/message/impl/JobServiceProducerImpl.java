@@ -8,7 +8,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames;
 import uk.gov.ons.fwmt.fwmtrmadapter.common.error.CTPException;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.JobServiceProducer;
 
@@ -28,7 +28,7 @@ public class JobServiceProducerImpl implements JobServiceProducer {
   @Retryable
   public void sendMessage(Object dto) throws CTPException {
     String JSONJobRequest = convertToJSON(dto);
-    rabbitTemplate.convertAndSend(exchange.getName(), QueueConfig.JOB_SVC_REQUEST_ROUTING_KEY, JSONJobRequest);
+    rabbitTemplate.convertAndSend(exchange.getName(), QueueNames.JOB_SVC_REQUEST_ROUTING_KEY, JSONJobRequest);
     log.info("Message send to queue", dto);
   }
 

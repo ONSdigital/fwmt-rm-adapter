@@ -16,6 +16,9 @@ import org.springframework.retry.RetryOperations;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 import org.springframework.retry.support.RetryTemplate;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames;
+
+
 import uk.gov.ons.fwmt.fwmtrmadapter.common.retry.CTPRetryPolicy;
 import uk.gov.ons.fwmt.fwmtrmadapter.common.retry.CustomMessageRecover;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.JobServiceReceiverImpl;
@@ -31,7 +34,7 @@ public class QueueConfig {
 
   @Bean
   public Queue rmToAdapterQueue() {
-    return QueueBuilder.durable(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.RM_TO_ADAPTER_QUEUE)
+    return QueueBuilder.durable(QueueNames.RM_TO_ADAPTER_QUEUE)
         .withArgument("x-dead-letter-exchange", "")
         .withArgument("x-dead-letter-routing-key", RM_ADAPTER_DLQ)
         .build();
@@ -39,7 +42,7 @@ public class QueueConfig {
 
   @Bean
   public Queue adapterToJobSvcQueue() {
-    return QueueBuilder.durable(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.ADAPTER_TO_JOBSVC_QUEUE)
+    return QueueBuilder.durable(QueueNames.ADAPTER_TO_JOBSVC_QUEUE)
         .withArgument("x-dead-letter-exchange", "")
         .withArgument("x-dead-letter-routing-key", ADAPTER_JOB_SVC_DLQ)
         .build();
@@ -47,7 +50,7 @@ public class QueueConfig {
 
   @Bean
   public Queue jobSvcToAdapterQueue() {
-    return QueueBuilder.durable(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.JOBSVC_TO_ADAPTER_QUEUE)
+    return QueueBuilder.durable(QueueNames.JOBSVC_TO_ADAPTER_QUEUE)
         .withArgument("x-dead-letter-exchange", "")
         .withArgument("x-dead-letter-routing-key", JOB_SVC_ADAPTER_DLQ)
         .build();
@@ -55,7 +58,7 @@ public class QueueConfig {
 
   @Bean
   public Queue adapterToRMQueue() {
-    return QueueBuilder.durable(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.ADAPTER_TO_RM_QUEUE)
+    return QueueBuilder.durable(QueueNames.ADAPTER_TO_RM_QUEUE)
         .withArgument("x-dead-letter-exchange", "")
         .withArgument("x-dead-letter-routing-key", ADAPTER_RM_DLQ)
         .build();
@@ -83,31 +86,31 @@ public class QueueConfig {
 
   @Bean
   public TopicExchange exchange() {
-    return new TopicExchange(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.RM_JOB_SVC_EXCHANGE);
+    return new TopicExchange(QueueNames.RM_JOB_SVC_EXCHANGE);
   }
 
   @Bean
   public Binding rmToAdapterBinding(@Qualifier("rmToAdapterQueue") Queue queue, TopicExchange exchange) {
     return BindingBuilder.bind(queue).to(exchange)
-        .with(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.RM_REQUEST_ROUTING_KEY);
+        .with(QueueNames.RM_REQUEST_ROUTING_KEY);
   }
 
   @Bean
   public Binding adapterToJobSvcBinding(@Qualifier("adapterToJobSvcQueue") Queue queue, TopicExchange exchange) {
     return BindingBuilder.bind(queue).to(exchange)
-        .with(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.JOB_SVC_REQUEST_ROUTING_KEY);
+        .with(QueueNames.JOB_SVC_REQUEST_ROUTING_KEY);
   }
 
   @Bean
   public Binding jobSvcToAdapterBinding(@Qualifier("jobSvcToAdapterQueue") Queue queue, TopicExchange exchange) {
     return BindingBuilder.bind(queue).to(exchange)
-        .with(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.JOB_SVC_RESPONSE_ROUTING_KEY);
+        .with(QueueNames.JOB_SVC_RESPONSE_ROUTING_KEY);
   }
 
   @Bean
   public Binding adapterToRMBinding(@Qualifier("adapterToRMQueue") Queue queue, TopicExchange exchange) {
     return BindingBuilder.bind(queue).to(exchange)
-        .with(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.RM_RESPONSE_ROUTING_KEY);
+        .with(QueueNames.RM_RESPONSE_ROUTING_KEY);
   }
 
   @Bean
@@ -129,7 +132,7 @@ public class QueueConfig {
 
     container.setAdviceChain(adviceChain);
     container.setConnectionFactory(connectionFactory);
-    container.setQueueNames(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.RM_TO_ADAPTER_QUEUE);
+    container.setQueueNames(QueueNames.RM_TO_ADAPTER_QUEUE);
     container.setMessageListener(listenerAdapter);
     return container;
   }
@@ -147,7 +150,7 @@ public class QueueConfig {
       @Qualifier("jobSvcListenerAdapter") MessageListenerAdapter listenerAdapter) {
     SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
     container.setConnectionFactory(connectionFactory);
-    container.setQueueNames(uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig.JOBSVC_TO_ADAPTER_QUEUE);
+    container.setQueueNames(QueueNames.JOBSVC_TO_ADAPTER_QUEUE);
     container.setMessageListener(listenerAdapter);
     return container;
   }

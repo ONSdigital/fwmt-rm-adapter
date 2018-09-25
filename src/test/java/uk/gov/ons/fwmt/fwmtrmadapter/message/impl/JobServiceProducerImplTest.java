@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTCreateJobRequest;
 import uk.gov.ons.fwmt.fwmtrmadapter.common.error.CTPException;
 import uk.gov.ons.fwmt.fwmtrmadapter.helper.FWMTMessageBuilder;
@@ -52,7 +52,7 @@ public class JobServiceProducerImplTest {
     jobServiceProducer.sendMessage(fwmtCreateJobRequest);
 
     //Then
-    verify(rabbitTemplate).convertAndSend(eq("exchange"), eq(QueueConfig.JOB_SVC_REQUEST_ROUTING_KEY), argumentCaptor.capture());
+    verify(rabbitTemplate).convertAndSend(eq("exchange"), eq(QueueNames.JOB_SVC_REQUEST_ROUTING_KEY), argumentCaptor.capture());
     String result = String.valueOf(argumentCaptor.getValue());
 
     assertEquals(expectedJSON, result);

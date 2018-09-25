@@ -6,7 +6,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueConfig;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames;
 import uk.gov.ons.fwmt.fwmtrmadapter.common.error.CTPException;
 import uk.gov.ons.fwmt.fwmtrmadapter.data.DummyRMReturn;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.RMProducer;
@@ -37,7 +37,7 @@ public class RMProducerImpl implements RMProducer {
       marshaller.marshal(dummyRMReturn, sw);
       String rmJobRequestResponse = sw.toString();
 
-      rabbitTemplate.convertAndSend(exchange.getName(), QueueConfig.RM_RESPONSE_ROUTING_KEY, rmJobRequestResponse);
+      rabbitTemplate.convertAndSend(exchange.getName(), QueueNames.RM_RESPONSE_ROUTING_KEY, rmJobRequestResponse);
     } catch (JAXBException e) {
       throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed to convert and send to RM.", e);
     }
