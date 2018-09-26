@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.DummyTMResponse;
-import uk.gov.ons.fwmt.fwmtrmadapter.common.error.CTPException;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.error.CTPException;
 import uk.gov.ons.fwmt.fwmtrmadapter.data.DummyRMReturn;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.JobServiceProducer;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.RMProducer;
