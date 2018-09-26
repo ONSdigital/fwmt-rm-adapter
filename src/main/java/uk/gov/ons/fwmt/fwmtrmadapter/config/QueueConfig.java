@@ -17,21 +17,19 @@ import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 import org.springframework.retry.support.RetryTemplate;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames;
-
-
-import uk.gov.ons.fwmt.fwmtrmadapter.common.retry.CTPRetryPolicy;
-import uk.gov.ons.fwmt.fwmtrmadapter.common.retry.CustomMessageRecover;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.retry.CTPRetryPolicy;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.retry.CustomMessageRecover;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.JobServiceReceiverImpl;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.RMReceiverImpl;
 import uk.gov.ons.fwmt.fwmtrmadapter.retrysupport.DefaultListenerSupport;
 
+import static uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames.ADAPTER_JOB_SVC_DLQ;
+import static uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames.ADAPTER_RM_DLQ;
+import static uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames.JOB_SVC_ADAPTER_DLQ;
+import static uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames.RM_ADAPTER_DLQ;
+
 @Configuration
 public class QueueConfig {
-  private static final String ADAPTER_JOB_SVC_DLQ = "adapter-jobSvc.DLQ";
-  private static final String JOB_SVC_ADAPTER_DLQ = "jobSvc-adapter.DLQ";
-  private static final String RM_ADAPTER_DLQ = "rm-adapter.DLQ";
-  private static final String ADAPTER_RM_DLQ = "adapter-rm.DLQ";
-
   @Bean
   public Queue rmToAdapterQueue() {
     return QueueBuilder.durable(QueueNames.RM_TO_ADAPTER_QUEUE)

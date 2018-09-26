@@ -10,7 +10,7 @@ import uk.gov.ons.ctp.response.action.message.instruction.ActionAddress;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
-import uk.gov.ons.fwmt.fwmtrmadapter.common.error.CTPException;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.error.CTPException;
 import uk.gov.ons.fwmt.fwmtrmadapter.service.impl.RMAdapterServiceImpl;
 
 import java.math.BigDecimal;

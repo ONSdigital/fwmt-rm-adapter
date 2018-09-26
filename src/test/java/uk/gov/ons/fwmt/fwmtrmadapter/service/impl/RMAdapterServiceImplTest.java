@@ -13,7 +13,7 @@ import uk.gov.ons.fwmt.fwmtgatewaycommon.data.DummyTMResponse;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTCancelJobRequest;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTCreateJobRequest;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTUpdateJobRequest;
-import uk.gov.ons.fwmt.fwmtrmadapter.common.error.CTPException;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.error.CTPException;
 import uk.gov.ons.fwmt.fwmtrmadapter.data.DummyRMReturn;
 import uk.gov.ons.fwmt.fwmtrmadapter.helper.ActionInstructionBuilder;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.JobServiceProducerImpl;
