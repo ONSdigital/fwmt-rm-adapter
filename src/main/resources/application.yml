@@ -15,15 +15,11 @@ spring:
     username: guest
     password: guest
     host: localhost
-    port: 5672
+    fwmt:
+      port: 5672
+    rm:
+      port: 6672
     virtualhost: /
-    listener:
-      retry:
-        enabled: true
-        initial-interval: 2000
-        max-attempts: 2
-        multiplier: 1.5
-        max-interval: 5000
 
 management.endpoint.health.show-details: always
 

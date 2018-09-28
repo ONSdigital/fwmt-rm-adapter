@@ -3,15 +3,19 @@ package uk.gov.ons.fwmt.fwmtrmadapter.config;
 import org.aopalliance.aop.Advice;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.retry.RetryOperations;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import org.springframework.retry.interceptor.RetryOperationsInterceptor;
@@ -20,29 +24,40 @@ import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.retry.CTPRetryPolicy;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.retry.CustomMessageRecover;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.JobServiceReceiverImpl;
-import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.RMReceiverImpl;
 import uk.gov.ons.fwmt.fwmtrmadapter.retrysupport.DefaultListenerSupport;
 
-import static uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames.ADAPTER_JOB_SVC_DLQ;
-import static uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames.ADAPTER_RM_DLQ;
-import static uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames.JOB_SVC_ADAPTER_DLQ;
-import static uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames.RM_ADAPTER_DLQ;
+
 
 @Configuration
-public class QueueConfig {
-  @Bean
-  public Queue rmToAdapterQueue() {
-    return QueueBuilder.durable(QueueNames.RM_TO_ADAPTER_QUEUE)
-        .withArgument("x-dead-letter-exchange", "")
-        .withArgument("x-dead-letter-routing-key", RM_ADAPTER_DLQ)
-        .build();
+public class FWMTQueueConfig {
+
+  private final String username;
+  private final String password;
+  private final String hostname;
+  private final int port;
+  private final String virtualHost;
+
+  @Autowired
+  public FWMTQueueConfig(
+      @Value("${spring.rabbitmq.username}") String username,
+      @Value("${spring.rabbitmq.password}") String password,
+      @Value("${spring.rabbitmq.hostname}") String hostname,
+      @Value("${spring.rabbitmq.fwmt.port}") int port,
+      @Value("${spring.rabbitmq.virtualhost}") String virtualHost) {
+
+    this.username = username;
+    this.password = password;
+    this.hostname = hostname;
+    this.port = port;
+    this.virtualHost = virtualHost;
   }
 
+  // Queue
   @Bean
   public Queue adapterToJobSvcQueue() {
     return QueueBuilder.durable(QueueNames.ADAPTER_TO_JOBSVC_QUEUE)
         .withArgument("x-dead-letter-exchange", "")
-        .withArgument("x-dead-letter-routing-key", ADAPTER_JOB_SVC_DLQ)
+        .withArgument("x-dead-letter-routing-key", QueueNames.ADAPTER_JOB_SVC_DLQ)
         .build();
   }
 
@@ -50,7 +65,7 @@ public class QueueConfig {
   public Queue jobSvcToAdapterQueue() {
     return QueueBuilder.durable(QueueNames.JOBSVC_TO_ADAPTER_QUEUE)
         .withArgument("x-dead-letter-exchange", "")
-        .withArgument("x-dead-letter-routing-key", JOB_SVC_ADAPTER_DLQ)
+        .withArgument("x-dead-letter-routing-key", QueueNames.JOB_SVC_ADAPTER_DLQ)
         .build();
   }
 
@@ -58,83 +73,63 @@ public class QueueConfig {
   public Queue adapterToRMQueue() {
     return QueueBuilder.durable(QueueNames.ADAPTER_TO_RM_QUEUE)
         .withArgument("x-dead-letter-exchange", "")
-        .withArgument("x-dead-letter-routing-key", ADAPTER_RM_DLQ)
+        .withArgument("x-dead-letter-routing-key", QueueNames.ADAPTER_RM_DLQ)
         .build();
   }
 
+  // DLQ
   @Bean
   Queue adapterDeadLetterQueue() {
-    return QueueBuilder.durable(ADAPTER_JOB_SVC_DLQ).build();
+    return QueueBuilder.durable(QueueNames.ADAPTER_JOB_SVC_DLQ).build();
   }
 
   @Bean
   Queue jobSvsDeadLetterQueue() {
-    return QueueBuilder.durable(JOB_SVC_ADAPTER_DLQ).build();
+    return QueueBuilder.durable(QueueNames.JOB_SVC_ADAPTER_DLQ).build();
   }
 
   @Bean
   Queue rmAdapterDeadLetterQueue() {
-    return QueueBuilder.durable(RM_ADAPTER_DLQ).build();
+    return QueueBuilder.durable(QueueNames.RM_ADAPTER_DLQ).build();
   }
 
   @Bean
   Queue adapterRmDeadLetterQueue() {
-    return QueueBuilder.durable(ADAPTER_RM_DLQ).build();
+    return QueueBuilder.durable(QueueNames.ADAPTER_RM_DLQ).build();
   }
 
+  // Shared Exchange
   @Bean
-  public TopicExchange exchange() {
-    return new TopicExchange(QueueNames.RM_JOB_SVC_EXCHANGE);
+  public DirectExchange exchange() {
+    return new DirectExchange(QueueNames.RM_JOB_SVC_EXCHANGE);
   }
 
+  // Bindings
   @Bean
-  public Binding rmToAdapterBinding(@Qualifier("rmToAdapterQueue") Queue queue, TopicExchange exchange) {
-    return BindingBuilder.bind(queue).to(exchange)
-        .with(QueueNames.RM_REQUEST_ROUTING_KEY);
-  }
-
-  @Bean
-  public Binding adapterToJobSvcBinding(@Qualifier("adapterToJobSvcQueue") Queue queue, TopicExchange exchange) {
+  public Binding adapterToJobSvcBinding(@Qualifier("adapterToJobSvcQueue") Queue queue, DirectExchange exchange) {
     return BindingBuilder.bind(queue).to(exchange)
         .with(QueueNames.JOB_SVC_REQUEST_ROUTING_KEY);
   }
 
   @Bean
-  public Binding jobSvcToAdapterBinding(@Qualifier("jobSvcToAdapterQueue") Queue queue, TopicExchange exchange) {
+  public Binding jobSvcToAdapterBinding(@Qualifier("jobSvcToAdapterQueue") Queue queue, DirectExchange exchange) {
     return BindingBuilder.bind(queue).to(exchange)
         .with(QueueNames.JOB_SVC_RESPONSE_ROUTING_KEY);
   }
 
   @Bean
-  public Binding adapterToRMBinding(@Qualifier("adapterToRMQueue") Queue queue, TopicExchange exchange) {
+  public Binding adapterToRMBinding(@Qualifier("adapterToRMQueue") Queue queue, DirectExchange exchange) {
     return BindingBuilder.bind(queue).to(exchange)
         .with(QueueNames.RM_RESPONSE_ROUTING_KEY);
   }
 
-  @Bean
-  public MessageListenerAdapter listenerAdapter(RMReceiverImpl receiver) {
-    return new MessageListenerAdapter(receiver, "receiveMessage");
-  }
-
+  // Listener
   @Bean
   public MessageListenerAdapter jobSvcListenerAdapter(JobServiceReceiverImpl receiver) {
     return new MessageListenerAdapter(receiver, "receiveMessage");
   }
 
-  @Bean
-  SimpleMessageListenerContainer container(ConnectionFactory connectionFactory,
-      MessageListenerAdapter listenerAdapter, RetryOperationsInterceptor interceptor) {
-    SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-
-    Advice[] adviceChain = {interceptor};
-
-    container.setAdviceChain(adviceChain);
-    container.setConnectionFactory(connectionFactory);
-    container.setQueueNames(QueueNames.RM_TO_ADAPTER_QUEUE);
-    container.setMessageListener(listenerAdapter);
-    return container;
-  }
-
+  // Interceptor
   @Bean
   RetryOperationsInterceptor interceptor(RetryOperations retryTemplate) {
     RetryOperationsInterceptor interceptor = new RetryOperationsInterceptor();
@@ -143,16 +138,22 @@ public class QueueConfig {
     return interceptor;
   }
 
+  // Container
   @Bean
-  public SimpleMessageListenerContainer jobSvcContainer(ConnectionFactory connectionFactory,
-      @Qualifier("jobSvcListenerAdapter") MessageListenerAdapter listenerAdapter) {
+  public SimpleMessageListenerContainer jobSvcContainer(ConnectionFactory FWMTConnectionFactory,
+      MessageListenerAdapter jobSvcListenerAdapter, RetryOperationsInterceptor interceptor) {
     SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-    container.setConnectionFactory(connectionFactory);
+
+    Advice[] adviceChain = {interceptor};
+
+    container.setAdviceChain(adviceChain);
+    container.setConnectionFactory(FWMTConnectionFactory);
     container.setQueueNames(QueueNames.JOBSVC_TO_ADAPTER_QUEUE);
-    container.setMessageListener(listenerAdapter);
+    container.setMessageListener(jobSvcListenerAdapter);
     return container;
   }
 
+  // Retry Template
   @Bean
   public RetryTemplate retryTemplate() {
     RetryTemplate retryTemplate = new RetryTemplate();
@@ -169,5 +170,20 @@ public class QueueConfig {
     retryTemplate.registerListener(new DefaultListenerSupport());
 
     return retryTemplate;
+  }
+
+  // Connection Factory
+  @Bean
+  @Primary
+  public ConnectionFactory FWMTConnectionFactory() {
+    CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory();
+
+    cachingConnectionFactory.setPort(port);
+    cachingConnectionFactory.setHost(hostname);
+    cachingConnectionFactory.setVirtualHost(virtualHost);
+    cachingConnectionFactory.setPassword(password);
+    cachingConnectionFactory.setUsername(username);
+
+    return cachingConnectionFactory;
   }
 }
