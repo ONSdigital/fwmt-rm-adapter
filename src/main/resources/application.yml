@@ -12,14 +12,14 @@ spring:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
   rabbitmq:
-    username: guest
-    password: guest
-    host: localhost
-    fwmt:
-      port: 5672
-    rm:
-      port: 6672
-    virtualhost: /
+#    username: guest
+#    password: guest
+#    host: localhost
+#    fwmt:
+#      port: 5672
+#    rm:
+#      port: 6672
+#    virtualhost: /
 
 management.endpoint.health.show-details: always
 

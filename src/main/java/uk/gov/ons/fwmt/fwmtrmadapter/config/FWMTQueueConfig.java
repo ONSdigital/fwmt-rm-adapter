@@ -10,9 +10,7 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -30,27 +28,6 @@ import uk.gov.ons.fwmt.fwmtrmadapter.retrysupport.DefaultListenerSupport;
 
 @Configuration
 public class FWMTQueueConfig {
-
-  private final String username;
-  private final String password;
-  private final String hostname;
-  private final int port;
-  private final String virtualHost;
-
-  @Autowired
-  public FWMTQueueConfig(
-      @Value("${spring.rabbitmq.username}") String username,
-      @Value("${spring.rabbitmq.password}") String password,
-      @Value("${spring.rabbitmq.hostname}") String hostname,
-      @Value("${spring.rabbitmq.fwmt.port}") int port,
-      @Value("${spring.rabbitmq.virtualhost}") String virtualHost) {
-
-    this.username = username;
-    this.password = password;
-    this.hostname = hostname;
-    this.port = port;
-    this.virtualHost = virtualHost;
-  }
 
   // Queue
   @Bean
@@ -177,6 +154,12 @@ public class FWMTQueueConfig {
   @Primary
   public ConnectionFactory FWMTConnectionFactory() {
     CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory();
+
+    String username = "guest";
+    String password = "guest";
+    String hostname = "localhost";
+    int port = 5672;
+    String virtualHost = "/";
 
     cachingConnectionFactory.setPort(port);
     cachingConnectionFactory.setHost(hostname);

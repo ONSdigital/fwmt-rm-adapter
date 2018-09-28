@@ -9,7 +9,6 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames;
@@ -20,25 +19,6 @@ public class RMQueueConfig {
 
   private static final String ACTION_FIELD_DLQ = "Action.FieldDLQ";
   private static final String ACTION_FIELD_QUEUE = "Action.Field";
-  private final String username;
-  private final String password;
-  private final String hostname;
-  private final int port;
-  private final String virtualHost;
-
-  public RMQueueConfig(@Value("${spring.rabbitmq.username}") String username,
-      @Value("${spring.rabbitmq.password}") String password,
-      @Value("${spring.rabbitmq.hostname}") String hostname,
-      @Value("${spring.rabbitmq.rm.port}") int port,
-      @Value("${spring.rabbitmq.virtualhost}") String virtualHost) {
-
-    this.username = username;
-    this.password = password;
-    this.hostname = hostname;
-    this.port = port;
-    this.virtualHost = virtualHost;
-
-  }
 
   // Queue
   @Bean
@@ -84,6 +64,12 @@ public class RMQueueConfig {
   @Bean
   public ConnectionFactory RMConnectionFactory() {
     CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory();
+
+    String username = "guest";
+    String password = "guest";
+    String hostname = "localhost";
+    int port = 6672;
+    String virtualHost = "/";
 
     cachingConnectionFactory.setPort(port);
     cachingConnectionFactory.setHost(hostname);
