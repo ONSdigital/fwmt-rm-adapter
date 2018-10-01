@@ -37,6 +37,7 @@ public class FwmtRmAdapterApplicationTests {
 
 	@Test
   @Ignore("We no longer create this queue, test needs changing")
+  // TODO rewrite test
 	public void testPathFromRMToJobSvc() throws InterruptedException {
 
 		TestReceiver testReceiver = new TestReceiver();

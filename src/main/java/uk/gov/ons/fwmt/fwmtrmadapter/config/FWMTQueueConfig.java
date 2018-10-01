@@ -160,6 +160,7 @@ public class FWMTQueueConfig {
   public ConnectionFactory fwmtConnectionFactory() {
     CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory();
 
+    // TODO make environment variables
     String username = "guest";
     String password = "guest";
     String hostname = "localhost";

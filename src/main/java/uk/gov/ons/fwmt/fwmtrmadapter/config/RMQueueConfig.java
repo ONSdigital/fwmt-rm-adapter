@@ -18,6 +18,7 @@ import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.RMReceiverImpl;
 public class RMQueueConfig {
 
   // Queue Names
+  // TODO add to common
   private static final String ACTION_FIELD_DLQ = "Action.FieldDLQ";
   private static final String ACTION_FIELD_QUEUE = "Action.Field";
   private static final String ACTION_FIELD_BINDING = "Action.Field.binding";
@@ -74,6 +75,7 @@ public class RMQueueConfig {
   public ConnectionFactory rmConnectionFactory() {
     CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory();
 
+    // TODO make environment variables
     String username = "guest";
     String password = "guest";
     String hostname = "localhost";
