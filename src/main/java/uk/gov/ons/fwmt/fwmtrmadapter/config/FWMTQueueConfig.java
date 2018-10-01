@@ -24,8 +24,6 @@ import uk.gov.ons.fwmt.fwmtgatewaycommon.retry.CustomMessageRecover;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.JobServiceReceiverImpl;
 import uk.gov.ons.fwmt.fwmtrmadapter.retrysupport.DefaultListenerSupport;
 
-
-
 @Configuration
 public class FWMTQueueConfig {
 
@@ -75,28 +73,29 @@ public class FWMTQueueConfig {
     return QueueBuilder.durable(QueueNames.ADAPTER_RM_DLQ).build();
   }
 
-  // Shared Exchange
+  // Exchange
   @Bean
-  public DirectExchange exchange() {
+  @Primary
+  public DirectExchange FWMTExchange() {
     return new DirectExchange(QueueNames.RM_JOB_SVC_EXCHANGE);
   }
 
   // Bindings
   @Bean
-  public Binding adapterToJobSvcBinding(@Qualifier("adapterToJobSvcQueue") Queue queue, DirectExchange exchange) {
-    return BindingBuilder.bind(queue).to(exchange)
+  public Binding adapterToJobSvcBinding(@Qualifier("adapterToJobSvcQueue") Queue queue, DirectExchange FWMTExchange) {
+    return BindingBuilder.bind(queue).to(FWMTExchange)
         .with(QueueNames.JOB_SVC_REQUEST_ROUTING_KEY);
   }
 
   @Bean
-  public Binding jobSvcToAdapterBinding(@Qualifier("jobSvcToAdapterQueue") Queue queue, DirectExchange exchange) {
-    return BindingBuilder.bind(queue).to(exchange)
+  public Binding jobSvcToAdapterBinding(@Qualifier("jobSvcToAdapterQueue") Queue queue, DirectExchange FWMTExchange) {
+    return BindingBuilder.bind(queue).to(FWMTExchange)
         .with(QueueNames.JOB_SVC_RESPONSE_ROUTING_KEY);
   }
 
   @Bean
-  public Binding adapterToRMBinding(@Qualifier("adapterToRMQueue") Queue queue, DirectExchange exchange) {
-    return BindingBuilder.bind(queue).to(exchange)
+  public Binding adapterToRMBinding(@Qualifier("adapterToRMQueue") Queue queue, DirectExchange FWMTExchange) {
+    return BindingBuilder.bind(queue).to(FWMTExchange)
         .with(QueueNames.RM_RESPONSE_ROUTING_KEY);
   }
 

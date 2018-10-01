@@ -11,7 +11,6 @@ import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.RMReceiverImpl;
 
 @Configuration
@@ -19,6 +18,7 @@ public class RMQueueConfig {
 
   private static final String ACTION_FIELD_DLQ = "Action.FieldDLQ";
   private static final String ACTION_FIELD_QUEUE = "Action.Field";
+  private static final String ACTION_FIELD_BINDING = "Action.Field.binding";
 
   // Queue
   @Bean
@@ -37,15 +37,21 @@ public class RMQueueConfig {
 
   // Bindings
   @Bean
-  public Binding rmToAdapterBinding(Queue rmToAdapterQueue, DirectExchange exchange) {
-    return BindingBuilder.bind(rmToAdapterQueue).to(exchange)
-        .with(QueueNames.RM_REQUEST_ROUTING_KEY);
+  public Binding rmToAdapterBinding(Queue rmToAdapterQueue, DirectExchange RMExchange) {
+    return BindingBuilder.bind(rmToAdapterQueue).to(RMExchange)
+        .with(ACTION_FIELD_BINDING);
   }
 
   // Listener
   @Bean
   public MessageListenerAdapter RMlistenerAdapter(RMReceiverImpl receiver) {
     return new MessageListenerAdapter(receiver, "receiveMessage");
+  }
+
+  // Exchange
+  @Bean
+  public DirectExchange RMExchange() {
+    return new DirectExchange(ACTION_FIELD_BINDING);
   }
 
   // Container
@@ -55,7 +61,7 @@ public class RMQueueConfig {
     SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
 
     container.setConnectionFactory(RMConnectionFactory);
-    container.setQueueNames(QueueNames.RM_TO_ADAPTER_QUEUE);
+    container.setQueueNames(ACTION_FIELD_QUEUE);
     container.setMessageListener(RMlistenerAdapter);
     return container;
   }

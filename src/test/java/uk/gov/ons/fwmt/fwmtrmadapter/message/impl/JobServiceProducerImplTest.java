@@ -45,14 +45,15 @@ public class JobServiceProducerImplTest {
     //Given
     FWMTMessageBuilder fwmtMessageBuilder = new FWMTMessageBuilder();
     FWMTCreateJobRequest fwmtCreateJobRequest = fwmtMessageBuilder.buildFWMTCreateJobRequest();
-    when(exchange.getName()).thenReturn("exchange");
+    when(exchange.getName()).thenReturn("FWMTExchange");
     when(objectMapper.writeValueAsString(eq(fwmtCreateJobRequest))).thenReturn(expectedJSON);
 
     //When
     jobServiceProducer.sendMessage(fwmtCreateJobRequest);
 
     //Then
-    verify(rabbitTemplate).convertAndSend(eq("exchange"), eq(QueueNames.JOB_SVC_REQUEST_ROUTING_KEY), argumentCaptor.capture());
+    verify(rabbitTemplate)
+        .convertAndSend(eq("FWMTExchange"), eq(QueueNames.JOB_SVC_REQUEST_ROUTING_KEY), argumentCaptor.capture());
     String result = String.valueOf(argumentCaptor.getValue());
 
     assertEquals(expectedJSON, result);
