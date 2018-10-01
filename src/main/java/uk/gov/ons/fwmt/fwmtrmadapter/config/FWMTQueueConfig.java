@@ -52,7 +52,7 @@ public class FWMTQueueConfig {
         .build();
   }
 
-  // DLQ
+  // Dead Letter Queues
   @Bean
   Queue adapterDeadLetterQueue() {
     return QueueBuilder.durable(QueueNames.ADAPTER_JOB_SVC_DLQ).build();

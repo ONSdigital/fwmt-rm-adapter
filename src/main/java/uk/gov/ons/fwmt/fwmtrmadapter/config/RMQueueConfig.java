@@ -9,6 +9,7 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.RMReceiverImpl;
@@ -16,6 +17,7 @@ import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.RMReceiverImpl;
 @Configuration
 public class RMQueueConfig {
 
+  // Queue Names
   private static final String ACTION_FIELD_DLQ = "Action.FieldDLQ";
   private static final String ACTION_FIELD_QUEUE = "Action.Field";
   private static final String ACTION_FIELD_BINDING = "Action.Field.binding";
@@ -29,7 +31,7 @@ public class RMQueueConfig {
         .build();
   }
 
-  // DLQ
+  // Dead Letter Queue
   @Bean
   Queue adapterDeadLetterQueue() {
     return QueueBuilder.durable(ACTION_FIELD_DLQ).build();
@@ -37,8 +39,9 @@ public class RMQueueConfig {
 
   // Bindings
   @Bean
-  public Binding rmToAdapterBinding(Queue rmToAdapterQueue, DirectExchange RMExchange) {
-    return BindingBuilder.bind(rmToAdapterQueue).to(RMExchange)
+  public Binding rmToAdapterBinding(@Qualifier("rmToAdapterQueue") Queue queue,
+      @Qualifier("RMExchange") DirectExchange directExchange) {
+    return BindingBuilder.bind(queue).to(directExchange)
         .with(ACTION_FIELD_BINDING);
   }
 
@@ -56,13 +59,13 @@ public class RMQueueConfig {
 
   // Container
   @Bean
-  SimpleMessageListenerContainer RMcontainer(ConnectionFactory RMConnectionFactory,
-      MessageListenerAdapter RMlistenerAdapter) {
+  SimpleMessageListenerContainer RMcontainer(@Qualifier("RMConnectionFactory") ConnectionFactory connectionFactory,
+      @Qualifier("RMlistenerAdapter") MessageListenerAdapter messageListenerAdapter) {
     SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
 
-    container.setConnectionFactory(RMConnectionFactory);
+    container.setConnectionFactory(connectionFactory);
     container.setQueueNames(ACTION_FIELD_QUEUE);
-    container.setMessageListener(RMlistenerAdapter);
+    container.setMessageListener(messageListenerAdapter);
     return container;
   }
 
