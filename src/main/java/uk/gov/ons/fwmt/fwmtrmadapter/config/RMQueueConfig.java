@@ -40,27 +40,27 @@ public class RMQueueConfig {
   // Bindings
   @Bean
   public Binding rmToAdapterBinding(@Qualifier("rmToAdapterQueue") Queue queue,
-      @Qualifier("RMExchange") DirectExchange directExchange) {
+      @Qualifier("rmExchange") DirectExchange directExchange) {
     return BindingBuilder.bind(queue).to(directExchange)
         .with(ACTION_FIELD_BINDING);
   }
 
   // Listener
   @Bean
-  public MessageListenerAdapter RMlistenerAdapter(RMReceiverImpl receiver) {
+  public MessageListenerAdapter rmListenerAdapter(RMReceiverImpl receiver) {
     return new MessageListenerAdapter(receiver, "receiveMessage");
   }
 
   // Exchange
   @Bean
-  public DirectExchange RMExchange() {
+  public DirectExchange rmExchange() {
     return new DirectExchange(ACTION_FIELD_BINDING);
   }
 
   // Container
   @Bean
-  SimpleMessageListenerContainer RMcontainer(@Qualifier("RMConnectionFactory") ConnectionFactory connectionFactory,
-      @Qualifier("RMlistenerAdapter") MessageListenerAdapter messageListenerAdapter) {
+  SimpleMessageListenerContainer rmContainer(@Qualifier("rmConnectionFactory") ConnectionFactory connectionFactory,
+      @Qualifier("rmListenerAdapter") MessageListenerAdapter messageListenerAdapter) {
     SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
 
     container.setConnectionFactory(connectionFactory);
@@ -71,7 +71,7 @@ public class RMQueueConfig {
 
   // Connection Factory
   @Bean
-  public ConnectionFactory RMConnectionFactory() {
+  public ConnectionFactory rmConnectionFactory() {
     CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory();
 
     String username = "guest";

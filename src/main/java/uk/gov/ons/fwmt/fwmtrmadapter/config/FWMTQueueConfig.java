@@ -45,7 +45,7 @@ public class FWMTQueueConfig {
   }
 
   @Bean
-  public Queue adapterToRMQueue() {
+  public Queue adapterToRmQueue() {
     return QueueBuilder.durable(QueueNames.ADAPTER_TO_RM_QUEUE)
         .withArgument("x-dead-letter-exchange", "")
         .withArgument("x-dead-letter-routing-key", QueueNames.ADAPTER_RM_DLQ)
@@ -76,26 +76,29 @@ public class FWMTQueueConfig {
   // Exchange
   @Bean
   @Primary
-  public DirectExchange FWMTExchange() {
+  public DirectExchange fwmtExchange() {
     return new DirectExchange(QueueNames.RM_JOB_SVC_EXCHANGE);
   }
 
   // Bindings
   @Bean
-  public Binding adapterToJobSvcBinding(@Qualifier("adapterToJobSvcQueue") Queue queue, DirectExchange FWMTExchange) {
-    return BindingBuilder.bind(queue).to(FWMTExchange)
+  public Binding adapterToJobSvcBinding(@Qualifier("adapterToJobSvcQueue") Queue queue,
+      @Qualifier("fwmtExchange") DirectExchange directExchange) {
+    return BindingBuilder.bind(queue).to(directExchange)
         .with(QueueNames.JOB_SVC_REQUEST_ROUTING_KEY);
   }
 
   @Bean
-  public Binding jobSvcToAdapterBinding(@Qualifier("jobSvcToAdapterQueue") Queue queue, DirectExchange FWMTExchange) {
-    return BindingBuilder.bind(queue).to(FWMTExchange)
+  public Binding jobSvcToAdapterBinding(@Qualifier("jobSvcToAdapterQueue") Queue queue,
+      @Qualifier("fwmtExchange") DirectExchange directExchange) {
+    return BindingBuilder.bind(queue).to(directExchange)
         .with(QueueNames.JOB_SVC_RESPONSE_ROUTING_KEY);
   }
 
   @Bean
-  public Binding adapterToRMBinding(@Qualifier("adapterToRMQueue") Queue queue, DirectExchange FWMTExchange) {
-    return BindingBuilder.bind(queue).to(FWMTExchange)
+  public Binding adapterToRmBinding(@Qualifier("adapterToRmQueue") Queue queue,
+      @Qualifier("fwmtExchange") DirectExchange directExchange) {
+    return BindingBuilder.bind(queue).to(directExchange)
         .with(QueueNames.RM_RESPONSE_ROUTING_KEY);
   }
 
@@ -107,25 +110,28 @@ public class FWMTQueueConfig {
 
   // Interceptor
   @Bean
-  RetryOperationsInterceptor interceptor(RetryOperations retryTemplate) {
+  RetryOperationsInterceptor interceptor(
+      @Qualifier("retryTemplate") RetryOperations retryOperations) {
     RetryOperationsInterceptor interceptor = new RetryOperationsInterceptor();
     interceptor.setRecoverer(new CustomMessageRecover());
-    interceptor.setRetryOperations(retryTemplate);
+    interceptor.setRetryOperations(retryOperations);
     return interceptor;
   }
 
   // Container
   @Bean
-  public SimpleMessageListenerContainer jobSvcContainer(ConnectionFactory FWMTConnectionFactory,
-      MessageListenerAdapter jobSvcListenerAdapter, RetryOperationsInterceptor interceptor) {
+  public SimpleMessageListenerContainer jobSvcContainer(
+      @Qualifier("fwmtConnectionFactory") ConnectionFactory connectionFactory,
+      @Qualifier("jobSvcListenerAdapter") MessageListenerAdapter messageListenerAdapter,
+      @Qualifier("interceptor") RetryOperationsInterceptor retryOperationsInterceptor) {
     SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
 
-    Advice[] adviceChain = {interceptor};
+    Advice[] adviceChain = {retryOperationsInterceptor};
 
     container.setAdviceChain(adviceChain);
-    container.setConnectionFactory(FWMTConnectionFactory);
+    container.setConnectionFactory(connectionFactory);
     container.setQueueNames(QueueNames.JOBSVC_TO_ADAPTER_QUEUE);
-    container.setMessageListener(jobSvcListenerAdapter);
+    container.setMessageListener(messageListenerAdapter);
     return container;
   }
 
@@ -151,7 +157,7 @@ public class FWMTQueueConfig {
   // Connection Factory
   @Bean
   @Primary
-  public ConnectionFactory FWMTConnectionFactory() {
+  public ConnectionFactory fwmtConnectionFactory() {
     CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory();
 
     String username = "guest";
