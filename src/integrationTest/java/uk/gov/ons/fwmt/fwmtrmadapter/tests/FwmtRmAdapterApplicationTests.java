@@ -31,7 +31,7 @@ public class FwmtRmAdapterApplicationTests {
 
 	@Autowired
 	private RabbitTemplate rabbitTemplate;
-	
+
   private static final String ACTION_FIELD_QUEUE = "Action.Field";
   private static final String ACTION_FIELD_BINDING = "Action.Field.binding";
 
