@@ -28,7 +28,7 @@ public class RMQueueConfig {
   private String virtualHost;
 
   public RMQueueConfig(@Value("${rabbitmq.initialinterval}") int initialInterval,
-      @Value("${rabbitmq.multiplier}") int multiplier,
+      @Value("#{new Double('${rabbitmq.multiplier}')}") int multiplier,
       @Value("$rabbitmq.maxInterval") int maxInterval,
       @Value("$rabbitmq.username") String username,
       @Value("$rabbitmq.password") String password,
