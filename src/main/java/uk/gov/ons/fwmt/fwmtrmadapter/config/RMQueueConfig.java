@@ -80,7 +80,8 @@ public class RMQueueConfig {
 
   // Container
   @Bean
-  SimpleMessageListenerContainer rmContainer(@Qualifier("rmConnectionFactory") ConnectionFactory connectionFactory,
+  public SimpleMessageListenerContainer rmContainer(
+      @Qualifier("rmConnectionFactory") ConnectionFactory connectionFactory,
       @Qualifier("rmListenerAdapter") MessageListenerAdapter messageListenerAdapter) {
     SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
 
