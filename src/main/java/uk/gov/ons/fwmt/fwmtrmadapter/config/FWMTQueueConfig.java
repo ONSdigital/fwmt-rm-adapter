@@ -38,7 +38,7 @@ public class FWMTQueueConfig {
   private String virtualHost;
 
   public FWMTQueueConfig(@Value("${rabbitmq.initialinterval}") int initialInterval,
-      @Value("${rabbitmq.multiplier}") int multiplier,
+      @Value("${rabbitmq.multiplier}") String multiplier,
       @Value("$rabbitmq.maxInterval") int maxInterval,
       @Value("$rabbitmq.username") String username,
       @Value("$rabbitmq.password") String password,
@@ -46,7 +46,7 @@ public class FWMTQueueConfig {
       @Value("$rabbitmq.fwmtPort") int fwmtPort,
       @Value("$rabbitmq.virtualHost") String virtualHost) {
     this.initialInterval = initialInterval;
-    this.multiplier = multiplier;
+    this.multiplier = Integer.parseInt(multiplier);
     this.maxInterval = maxInterval;
     this.username = username;
     this.password = password;
