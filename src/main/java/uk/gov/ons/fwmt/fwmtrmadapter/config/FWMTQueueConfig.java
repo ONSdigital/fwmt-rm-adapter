@@ -29,7 +29,7 @@ import uk.gov.ons.fwmt.fwmtrmadapter.retrysupport.DefaultListenerSupport;
 public class FWMTQueueConfig {
 
   private int initialInterval;
-  private int multiplier;
+  private double multiplier;
   private int maxInterval;
   private String username;
   private String password;
@@ -38,7 +38,7 @@ public class FWMTQueueConfig {
   private String virtualHost;
 
   public FWMTQueueConfig(@Value("${rabbitmq.initialinterval}") Integer initialInterval,
-      @Value("${rabbitmq.multiplier}") Integer multiplier,
+      @Value("${rabbitmq.multiplier}") Double multiplier,
       @Value("${rabbitmq.maxInterval}") Integer maxInterval,
       @Value("${rabbitmq.username}") String username,
       @Value("${rabbitmq.password}") String password,
