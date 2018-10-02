@@ -182,9 +182,11 @@ dependencies {
     compile group: 'org.springframework.retry', name: 'spring-retry', version: '1.2.2.RELEASE'
     compile group: 'org.springframework', name: 'spring-aop', version: '5.0.8.RELEASE'
 	compile group: 'org.projectlombok', name: 'lombok', version: '1.16.8'
-    compile group: 'uk.gov.ons.fwmt', name: 'fwmt-gateway-common', version: '0.0.4-RELEASE'
+    compile group: 'uk.gov.ons.fwmt', name: 'fwmt-gateway-common', version: '0.0.8-RELEASE'
 	compile("org.springframework.boot:spring-boot-starter-amqp")
 	compile('org.springframework.boot:spring-boot-starter')
+	compile('org.springframework.boot:spring-boot-starter-actuator')
+	compile('org.springframework.boot:spring-boot-starter-web')
 	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.5'
 	compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.5'
 	compile group: 'org.json', name: 'json', version: '20180130'
