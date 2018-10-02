@@ -37,13 +37,13 @@ public class FWMTQueueConfig {
   private int fwmtPort;
   private String virtualHost;
 
-  public FWMTQueueConfig(@Value("${rabbitmq.initialinterval}") int initialInterval,
+  public FWMTQueueConfig(@Value("#{new Integer('$rabbitmq.initialInterval}')}") int initialInterval,
       @Value("#{new Double('${rabbitmq.multiplier}')}") int multiplier,
-      @Value("$rabbitmq.maxInterval") int maxInterval,
+      @Value("#{new Integer('$rabbitmq.maxInterval}')}") int maxInterval,
       @Value("$rabbitmq.username") String username,
       @Value("$rabbitmq.password") String password,
       @Value("$rabbitmq.hostname") String hostname,
-      @Value("$rabbitmq.fwmtPort") int fwmtPort,
+      @Value("#{new Integer('$rabbitmq.fwmtPort}')}") int fwmtPort,
       @Value("$rabbitmq.virtualHost") String virtualHost) {
     this.initialInterval = initialInterval;
     this.multiplier = multiplier;
