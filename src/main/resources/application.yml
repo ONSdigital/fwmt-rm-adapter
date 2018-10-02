@@ -11,19 +11,6 @@ spring:
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
-  rabbitmq:
-    username: guest
-    password: guest
-    host: localhost
-    port: 5672
-    virtualhost: /
-    listener:
-      retry:
-        enabled: true
-        initial-interval: 2000
-        max-attempts: 2
-        multiplier: 1.5
-        max-interval: 5000
 
 management.endpoint.health.show-details: always
 
@@ -39,3 +26,14 @@ logging:
   pattern:
     console: "%d{yyyy-MMM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{CID}] %logger{1}::%M - %msg%n"
     file: "%d{yyyy-MMM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{CID}] %logger{1}::%M - %msg%n"
+
+rabbitmq:
+  initialinterval: 5000
+  multiplier: 3.0
+  maxInterval: 45000
+  username: "guest"
+  password: "guest"
+  hostname: "localhost"
+  fwmtPort: 5672
+  rmPort: 6672
+  virtualHost: "/"
