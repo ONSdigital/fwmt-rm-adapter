@@ -18,38 +18,30 @@ import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.RMReceiverImpl;
 @Configuration
 public class RMQueueConfig {
 
-  private int initialInterval;
-  private int multiplier;
-  private int maxInterval;
+  // Queue Names
+  // TODO add to common
+  private static final String ACTION_FIELD_DLQ = "Action.FieldDLQ";
+  private static final String ACTION_FIELD_QUEUE = "Action.Field";
+  private static final String ACTION_FIELD_BINDING = "Action.Field.binding";
+
   private String username;
   private String password;
   private String hostname;
   private int rmPort;
   private String virtualHost;
 
-  public RMQueueConfig(@Value("$rabbitmq.initialInterval") Integer initialInterval,
-      @Value("$rabbitmq.multiplier") Integer multiplier,
-      @Value("$rabbitmq.maxInterval") Integer maxInterval,
+  public RMQueueConfig(
       @Value("$rabbitmq.username") String username,
       @Value("$rabbitmq.password") String password,
       @Value("$rabbitmq.hostname") String hostname,
       @Value("$rabbitmq.rmPort") Integer rmPort,
       @Value("$rabbitmq.virtualHost") String virtualHost) {
-    this.initialInterval = initialInterval;
-    this.multiplier = multiplier;
-    this.maxInterval = maxInterval;
     this.username = username;
     this.password = password;
     this.hostname = hostname;
     this.rmPort = rmPort;
     this.virtualHost = virtualHost;
   }
-
-  // Queue Names
-  // TODO add to common
-  private static final String ACTION_FIELD_DLQ = "Action.FieldDLQ";
-  private static final String ACTION_FIELD_QUEUE = "Action.Field";
-  private static final String ACTION_FIELD_BINDING = "Action.Field.binding";
 
   // Queue
   @Bean
