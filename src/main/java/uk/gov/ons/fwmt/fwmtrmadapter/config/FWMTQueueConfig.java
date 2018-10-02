@@ -82,22 +82,22 @@ public class FWMTQueueConfig {
 
   // Dead Letter Queues
   @Bean
-  Queue adapterDeadLetterQueue() {
+  public Queue adapterDeadLetterQueue() {
     return QueueBuilder.durable(QueueNames.ADAPTER_JOB_SVC_DLQ).build();
   }
 
   @Bean
-  Queue jobSvsDeadLetterQueue() {
+  public Queue jobSvsDeadLetterQueue() {
     return QueueBuilder.durable(QueueNames.JOB_SVC_ADAPTER_DLQ).build();
   }
 
   @Bean
-  Queue rmAdapterDeadLetterQueue() {
+  public Queue rmAdapterDeadLetterQueue() {
     return QueueBuilder.durable(QueueNames.RM_ADAPTER_DLQ).build();
   }
 
   @Bean
-  Queue adapterRmDeadLetterQueue() {
+  public Queue adapterRmDeadLetterQueue() {
     return QueueBuilder.durable(QueueNames.ADAPTER_RM_DLQ).build();
   }
 
@@ -138,7 +138,7 @@ public class FWMTQueueConfig {
 
   // Interceptor
   @Bean
-  RetryOperationsInterceptor interceptor(
+  public RetryOperationsInterceptor interceptor(
       @Qualifier("retryTemplate") RetryOperations retryOperations) {
     RetryOperationsInterceptor interceptor = new RetryOperationsInterceptor();
     interceptor.setRecoverer(new CustomMessageRecover());

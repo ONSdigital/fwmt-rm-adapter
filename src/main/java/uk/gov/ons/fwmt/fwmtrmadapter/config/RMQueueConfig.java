@@ -54,7 +54,7 @@ public class RMQueueConfig {
 
   // Dead Letter Queue
   @Bean
-  Queue adapterDeadLetterQueue() {
+  public Queue adapterDeadLetterQueue() {
     return QueueBuilder.durable(ACTION_FIELD_DLQ).build();
   }
 
