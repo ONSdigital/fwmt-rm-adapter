@@ -27,13 +27,13 @@ public class RMQueueConfig {
   private int rmPort;
   private String virtualHost;
 
-  public RMQueueConfig(@Value("#{new Integer('$rabbitmq.initialInterval}')}") int initialInterval,
-      @Value("#{new Double('${rabbitmq.multiplier}')}") int multiplier,
-      @Value("#{new Integer('$rabbitmq.maxInterval}')}") int maxInterval,
+  public RMQueueConfig(@Value("$rabbitmq.initialInterval") Integer initialInterval,
+      @Value("$rabbitmq.multiplier") Integer multiplier,
+      @Value("$rabbitmq.maxInterval") Integer maxInterval,
       @Value("$rabbitmq.username") String username,
       @Value("$rabbitmq.password") String password,
       @Value("$rabbitmq.hostname") String hostname,
-      @Value("#{new Integer('$rabbitmq.rmPort}')}") int rmPort,
+      @Value("$rabbitmq.rmPort") Integer rmPort,
       @Value("$rabbitmq.virtualHost") String virtualHost) {
     this.initialInterval = initialInterval;
     this.multiplier = multiplier;
