@@ -6,7 +6,6 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
@@ -16,38 +15,28 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.retry.RetryOperations;
-import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import org.springframework.retry.interceptor.RetryOperationsInterceptor;
-import org.springframework.retry.support.RetryTemplate;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames;
-import uk.gov.ons.fwmt.fwmtgatewaycommon.retry.CTPRetryPolicy;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.retry.CustomMessageRecover;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.JobServiceReceiverImpl;
-import uk.gov.ons.fwmt.fwmtrmadapter.retrysupport.DefaultListenerSupport;
+
+import static uk.gov.ons.fwmt.fwmtrmadapter.config.ConnectionFactoryBuilder.createConnectionFactory;
 
 @Configuration
 public class FWMTQueueConfig {
 
-  private int initialInterval;
-  private double multiplier;
-  private int maxInterval;
   private String username;
   private String password;
   private String hostname;
   private int fwmtPort;
   private String virtualHost;
 
-  public FWMTQueueConfig(@Value("${rabbitmq.initialinterval}") Integer initialInterval,
-      @Value("${rabbitmq.multiplier}") Double multiplier,
-      @Value("${rabbitmq.maxInterval}") Integer maxInterval,
+  public FWMTQueueConfig(
       @Value("${rabbitmq.username}") String username,
       @Value("${rabbitmq.password}") String password,
       @Value("${rabbitmq.hostname}") String hostname,
       @Value("${rabbitmq.fwmtPort}") Integer fwmtPort,
       @Value("${rabbitmq.virtualHost}") String virtualHost) {
-    this.initialInterval = initialInterval;
-    this.multiplier = multiplier;
-    this.maxInterval = maxInterval;
     this.username = username;
     this.password = password;
     this.hostname = hostname;
@@ -163,39 +152,11 @@ public class FWMTQueueConfig {
     return container;
   }
 
-  // Retry Template
-  @Bean
-  public RetryTemplate retryTemplate() {
-    RetryTemplate retryTemplate = new RetryTemplate();
-
-    ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();
-    backOffPolicy.setInitialInterval(initialInterval);
-    backOffPolicy.setMultiplier(multiplier);
-    backOffPolicy.setMaxInterval(maxInterval);
-    retryTemplate.setBackOffPolicy(backOffPolicy);
-
-    CTPRetryPolicy ctpRetryPolicy = new CTPRetryPolicy();
-    retryTemplate.setRetryPolicy(ctpRetryPolicy);
-
-    retryTemplate.registerListener(new DefaultListenerSupport());
-
-    return retryTemplate;
-  }
-
   // Connection Factory
   @Bean
   @Primary
   public ConnectionFactory fwmtConnectionFactory() {
-    CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory();
-
-    // TODO make environment variables
-
-    cachingConnectionFactory.setPort(fwmtPort);
-    cachingConnectionFactory.setHost(hostname);
-    cachingConnectionFactory.setVirtualHost(virtualHost);
-    cachingConnectionFactory.setPassword(password);
-    cachingConnectionFactory.setUsername(username);
-
-    return cachingConnectionFactory;
+    return createConnectionFactory(fwmtPort, hostname, virtualHost, password, username);
   }
+
 }
