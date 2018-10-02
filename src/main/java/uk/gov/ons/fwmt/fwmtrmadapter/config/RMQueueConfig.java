@@ -31,11 +31,11 @@ public class RMQueueConfig {
   private String virtualHost;
 
   public RMQueueConfig(
-      @Value("$rabbitmq.username") String username,
-      @Value("$rabbitmq.password") String password,
-      @Value("$rabbitmq.hostname") String hostname,
-      @Value("$rabbitmq.rmPort") Integer rmPort,
-      @Value("$rabbitmq.virtualHost") String virtualHost) {
+      @Value("${rabbitmq.username}") String username,
+      @Value("${rabbitmq.password}") String password,
+      @Value("${rabbitmq.hostname}") String hostname,
+      @Value("${rabbitmq.rmPort}") Integer rmPort,
+      @Value("${rabbitmq.virtualHost}") String virtualHost) {
     this.username = username;
     this.password = password;
     this.hostname = hostname;
