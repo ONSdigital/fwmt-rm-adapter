@@ -11,6 +11,7 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -26,6 +27,33 @@ import uk.gov.ons.fwmt.fwmtrmadapter.retrysupport.DefaultListenerSupport;
 
 @Configuration
 public class FWMTQueueConfig {
+
+  private int initialInterval;
+  private int multiplier;
+  private int maxInterval;
+  private String username;
+  private String password;
+  private String hostname;
+  private int fwmtPort;
+  private String virtualHost;
+
+  public FWMTQueueConfig(@Value("${rabbitmq.initialinterval}") int initialInterval,
+      @Value("${rabbitmq.multiplier}") int multiplier,
+      @Value("$rabbitmq.maxInterval") int maxInterval,
+      @Value("$rabbitmq.username") String username,
+      @Value("$rabbitmq.password") String password,
+      @Value("$rabbitmq.hostname") String hostname,
+      @Value("$rabbitmq.fwmtPort") int fwmtPort,
+      @Value("$rabbitmq.virtualHost") String virtualHost) {
+    this.initialInterval = initialInterval;
+    this.multiplier = multiplier;
+    this.maxInterval = maxInterval;
+    this.username = username;
+    this.password = password;
+    this.hostname = hostname;
+    this.fwmtPort = fwmtPort;
+    this.virtualHost = virtualHost;
+  }
 
   // Queue
   @Bean
@@ -141,9 +169,9 @@ public class FWMTQueueConfig {
     RetryTemplate retryTemplate = new RetryTemplate();
 
     ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();
-    backOffPolicy.setInitialInterval(5000);
-    backOffPolicy.setMultiplier(3.0);
-    backOffPolicy.setMaxInterval(45000);
+    backOffPolicy.setInitialInterval(initialInterval);
+    backOffPolicy.setMultiplier(multiplier);
+    backOffPolicy.setMaxInterval(maxInterval);
     retryTemplate.setBackOffPolicy(backOffPolicy);
 
     CTPRetryPolicy ctpRetryPolicy = new CTPRetryPolicy();
@@ -161,13 +189,8 @@ public class FWMTQueueConfig {
     CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory();
 
     // TODO make environment variables
-    String username = "guest";
-    String password = "guest";
-    String hostname = "localhost";
-    int port = 5672;
-    String virtualHost = "/";
 
-    cachingConnectionFactory.setPort(port);
+    cachingConnectionFactory.setPort(fwmtPort);
     cachingConnectionFactory.setHost(hostname);
     cachingConnectionFactory.setVirtualHost(virtualHost);
     cachingConnectionFactory.setPassword(password);

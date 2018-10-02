@@ -10,12 +10,40 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.RMReceiverImpl;
 
 @Configuration
 public class RMQueueConfig {
+
+  private int initialInterval;
+  private int multiplier;
+  private int maxInterval;
+  private String username;
+  private String password;
+  private String hostname;
+  private int rmPort;
+  private String virtualHost;
+
+  public RMQueueConfig(@Value("${rabbitmq.initialinterval}") int initialInterval,
+      @Value("${rabbitmq.multiplier}") int multiplier,
+      @Value("$rabbitmq.maxInterval") int maxInterval,
+      @Value("$rabbitmq.username") String username,
+      @Value("$rabbitmq.password") String password,
+      @Value("$rabbitmq.hostname") String hostname,
+      @Value("$rabbitmq.fwmtPort") int rmPort,
+      @Value("$rabbitmq.virtualHost") String virtualHost) {
+    this.initialInterval = initialInterval;
+    this.multiplier = multiplier;
+    this.maxInterval = maxInterval;
+    this.username = username;
+    this.password = password;
+    this.hostname = hostname;
+    this.rmPort = rmPort;
+    this.virtualHost = virtualHost;
+  }
 
   // Queue Names
   // TODO add to common
@@ -75,14 +103,7 @@ public class RMQueueConfig {
   public ConnectionFactory rmConnectionFactory() {
     CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory();
 
-    // TODO make environment variables
-    String username = "guest";
-    String password = "guest";
-    String hostname = "localhost";
-    int port = 6672;
-    String virtualHost = "/";
-
-    cachingConnectionFactory.setPort(port);
+    cachingConnectionFactory.setPort(rmPort);
     cachingConnectionFactory.setHost(hostname);
     cachingConnectionFactory.setVirtualHost(virtualHost);
     cachingConnectionFactory.setPassword(password);
