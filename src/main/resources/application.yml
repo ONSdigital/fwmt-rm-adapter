@@ -1,7 +1,6 @@
 server:
   port: 9094
 
-
 spring:
   application:
     name: fwmt-job-uk.gov.ons.fwmt.fwmtrmadapter
@@ -28,12 +27,18 @@ logging:
     file: "%d{yyyy-MMM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{CID}] %logger{1}::%M - %msg%n"
 
 rabbitmq:
+  rm:
+    username: "guest"
+    password: "guest"
+    hostname: "localhost"
+    port: 6672
+    virtualHost: "/"
+  fwmt:
+    username: "guest"
+    password: "guest"
+    hostname: "localhost"
+    port: 5672
+    virtualHost: "/"
   initialinterval: 5000
   multiplier: 3.0
   maxInterval: 45000
-  username: "guest"
-  password: "guest"
-  hostname: "localhost"
-  fwmtPort: 5672
-  rmPort: 6672
-  virtualHost: "/"

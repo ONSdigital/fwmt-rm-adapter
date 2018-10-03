@@ -32,11 +32,11 @@ public class FWMTQueueConfig {
   private String virtualHost;
 
   public FWMTQueueConfig(
-      @Value("${rabbitmq.username}") String username,
-      @Value("${rabbitmq.password}") String password,
-      @Value("${rabbitmq.hostname}") String hostname,
-      @Value("${rabbitmq.fwmtPort}") Integer fwmtPort,
-      @Value("${rabbitmq.virtualHost}") String virtualHost) {
+      @Value("${rabbitmq.fwmt.username}") String username,
+      @Value("${rabbitmq.fwmt.password}") String password,
+      @Value("${rabbitmq.fwmt.hostname}") String hostname,
+      @Value("${rabbitmq.fwmt.port}") Integer fwmtPort,
+      @Value("${rabbitmq.fwmt.virtualHost}") String virtualHost) {
     this.username = username;
     this.password = password;
     this.hostname = hostname;
