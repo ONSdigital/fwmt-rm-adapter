@@ -20,7 +20,7 @@ logging:
     uk.gov.ons.fwmt: DEBUG
     org.springframework.security: ERROR
     org.springframework.web: ERROR
-    org.springframework.amqp: DEBUG
+    org.springframework.amqp: ERROR
     org.hibernate: ERROR
     org.apache.commons.dbcp2: ERROR
   file: target/SpringErrors/spring.log
