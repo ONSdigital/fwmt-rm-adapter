@@ -8,12 +8,14 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.error.CTPException;
-import uk.gov.ons.fwmt.fwmtrmadapter.data.DummyRMReturn;
+import uk.gov.ons.fwmt.fwmtohsjobstatusnotification.FwmtOHSJobStatusNotification;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.RMProducer;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.namespace.QName;
 import java.io.StringWriter;
 
 @Component
@@ -27,14 +29,17 @@ public class RMProducerImpl implements RMProducer {
   private Exchange exchange;
 
   @Retryable
-  public void sendJobRequestResponse(DummyRMReturn dummyRMReturn) throws CTPException {
+  public void sendJobRequestResponse(FwmtOHSJobStatusNotification fwmtOHSJobStatusNotification) throws CTPException {
     JAXBContext jaxbContext;
     try {
-      jaxbContext = JAXBContext.newInstance(DummyRMReturn.class);
+      jaxbContext = JAXBContext.newInstance(FwmtOHSJobStatusNotification.class);
       Marshaller marshaller = jaxbContext.createMarshaller();
 
       StringWriter sw = new StringWriter();
-      marshaller.marshal(dummyRMReturn, sw);
+
+      QName qName = new QName("http://ons.gov.uk/fwmt/FwmtOHSJobStatusNotification", "FwmtOHSJobStatusNotification");
+      JAXBElement<FwmtOHSJobStatusNotification> root = new JAXBElement<FwmtOHSJobStatusNotification>(qName, FwmtOHSJobStatusNotification.class, fwmtOHSJobStatusNotification);
+      marshaller.marshal(root, sw);
       String rmJobRequestResponse = sw.toString();
 
       rabbitTemplate.convertAndSend(exchange.getName(), QueueNames.RM_RESPONSE_ROUTING_KEY, rmJobRequestResponse);

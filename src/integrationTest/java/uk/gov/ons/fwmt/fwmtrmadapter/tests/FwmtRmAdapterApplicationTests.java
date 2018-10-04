@@ -25,8 +25,8 @@ public class FwmtRmAdapterApplicationTests {
 
 	private final	String XML = "<ins:actionInstruction xmlns:ins=\"http://ons.gov.uk/ctp/response/action/message/instruction\"><actionCancel><actionId>5a9f4323</actionId><responseRequired>true</responseRequired><reason>deleted for test</reason></actionCancel></ins:actionInstruction>";
 	private final String EXPECTED_REQUEST_MESSAGE_JSON = "{\"actionType\":\"Cancel\",\"jobIdentity\":\"5a9f4323\",\"reason\":\"deleted for test\"}";
-	private final String JSON = "{\"identity\":\"test\"}";
-	private final String EXPECTED_RESPONSE_MESSAGE_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><DummyRMReturn><identity>test</identity></DummyRMReturn>";
+	private final String JSON = "{\"elligabilityUnknownReasonRef\":null,\"eventDate\":\"2018-10-01T13:26:42.067+0000\",\"inelligableReasonRef\":null,\"jobIdentity\":\"24aa4057\",\"nonContactDetail\":{\"contactCardLeft\":null,\"contactDateTime\":null,\"name\":null},\"outcomeCategory\":null,\"outcomeReason\":null,\"propertyDetails\":{\"description\":\"Entry phone access intercom\",\"floor\":null,\"type\":null},\"username\":\"ohstestuser1\",\"additionalProperties\":[]}";
+	private final String EXPECTED_RESPONSE_MESSAGE_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><ns2:FwmtOHSJobStatusNotification xmlns:ns2=\"http://ons.gov.uk/fwmt/FwmtOHSJobStatusNotification\"><eventDate>2018-10-01T13:26:42.067Z</eventDate><jobIdentity>24aa4057</jobIdentity><nonContactDetail/><propertyDetails><description>Entry phone access intercom</description></propertyDetails><username>ohstestuser1</username></ns2:FwmtOHSJobStatusNotification>";
 
 	@Autowired
 	private RabbitTemplate rabbitTemplate;
