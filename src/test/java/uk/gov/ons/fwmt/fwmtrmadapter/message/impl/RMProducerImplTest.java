@@ -59,6 +59,5 @@ public class RMProducerImplTest {
     String result = String.valueOf(argumentCaptor.getValue());
 
     assertEquals(expectedResult, result);
-
   }
 }
