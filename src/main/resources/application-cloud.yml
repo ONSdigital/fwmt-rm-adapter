@@ -1,9 +1,20 @@
 spring:
   application:
     name: FWMT RM Adapter
-  rabbitmq:
-    username: ${cloud.services.rabbitmq.connection.username}
-    password: ${cloud.services.rabbitmq.connection.password}
-    host: ${cloud.services.rabbitmq.connection.host}
-    port: ${cloud.services.rabbitmq.connection.port}
-    virtualhost: ${cloud.services.rabbitmq.connection.virtualhost}
+
+rabbitmq:
+  rm:
+    username: ${cloud.services.rm-rabbitmq.connection.username}
+    password: ${cloud.services.rm-rabbitmq.connection.password}
+    hostname: ${cloud.services.rm-rabbitmq.connection.host}
+    port: ${cloud.services.rm-rabbitmq.connection.port}
+    virtualHost: ${cloud.services.rm-rabbitmq.connection.virtualhost}
+  fwmt:
+    username: ${cloud.services.fwmt-rabbit.connection.username}
+    password: ${cloud.services.fwmt-rabbit.connection.password}
+    hostname: ${cloud.services.fwmt-rabbit.connection.host}
+    port: ${cloud.services.fwmt-rabbit.connection.port}
+    virtualHost: ${cloud.services.fwmt-rabbit.connection.virtualhost}
+  initialinterval: 5000
+  multiplier: 3.0
+  maxInterval: 45000
