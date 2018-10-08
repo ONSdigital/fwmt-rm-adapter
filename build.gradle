@@ -103,7 +103,6 @@ bootJar {
 		attributes(["Git-Commit": repo.head().getAbbreviatedId(8),
 					"Git-Branch": repo.branch.getCurrent().getName() ], "common")
 	}
-	from sourceSets.main.output
 }
 test {
 	jacoco {
