@@ -83,16 +83,6 @@ task genJaxb {
 	}
 }
 
-jar {
-	baseName = 'fwmt-rm-adapter'
-	group = 'uk.gov.ons.fwmt'
-	version =  version
-	manifest {
-		attributes(["Git-Commit": repo.head().getAbbreviatedId(8),
-					"Git-Branch": repo.branch.getCurrent().getName() ], "common")
-	}
-	from sourceSets.main.output
-}
 
 sourceSets {
 	integrationTest {
@@ -105,6 +95,16 @@ sourceSets {
 	}
 }
 
+bootJar {
+	baseName = 'fwmt-rm-adapter'
+	group = 'uk.gov.ons.fwmt'
+	version =  version
+	manifest {
+		attributes(["Git-Commit": repo.head().getAbbreviatedId(8),
+					"Git-Branch": repo.branch.getCurrent().getName() ], "common")
+	}
+	from sourceSets.main.output
+}
 test {
 	jacoco {
 		destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
