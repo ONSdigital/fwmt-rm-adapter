@@ -68,11 +68,11 @@ public class RMQueueConfig {
   }
 
   // Bindings
+
   @Bean
-  public Binding rmToAdapterBinding(@Qualifier("rmToAdapterQueue") Queue queue,
-      @Qualifier("rmExchange") DirectExchange directExchange) {
-    Binding binding = BindingBuilder.bind(queue).to(directExchange)
-        .with(ACTION_FIELD_BINDING);
+  public Binding rmToAdapterBinding() {
+    Binding binding = BindingBuilder.bind(adapterDeadLetterQueue()).to(actionDlqExchange())
+        .with("Action.Field.binding");
     binding.setAdminsThatShouldDeclare(rmAmqpAdmin());
     return binding;
   }
@@ -84,9 +84,10 @@ public class RMQueueConfig {
   }
 
   // Exchange
+
   @Bean
-  public DirectExchange rmExchange() {
-    DirectExchange exchange = new DirectExchange(ACTION_FIELD_BINDING);
+  public DirectExchange actionDlqExchange() {
+    DirectExchange exchange = new DirectExchange("action-deadletter-exchange");
     exchange.setAdminsThatShouldDeclare(rmAmqpAdmin());
     return exchange;
   }
