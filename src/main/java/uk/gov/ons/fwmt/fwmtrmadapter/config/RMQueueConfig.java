@@ -28,6 +28,7 @@ public class RMQueueConfig {
   private static final String ACTION_FIELD_DLQ = "Action.FieldDLQ";
   private static final String ACTION_FIELD_QUEUE = "Action.Field";
   private static final String ACTION_FIELD_BINDING = "Action.Field.binding";
+  public static final String ACTION_DEADLETTER_EXCHANGE = "action-deadletter-exchange";
 
   private String username;
   private String password;
@@ -52,8 +53,8 @@ public class RMQueueConfig {
   @Bean
   public Queue rmToAdapterQueue() {
     Queue queue = QueueBuilder.durable(ACTION_FIELD_QUEUE)
-        .withArgument("x-dead-letter-exchange", "action-deadletter-exchange")
-        .withArgument("x-dead-letter-routing-key", "Action.Field.binding")
+        .withArgument("x-dead-letter-exchange", ACTION_DEADLETTER_EXCHANGE)
+        .withArgument("x-dead-letter-routing-key", ACTION_FIELD_BINDING)
         .build();
     queue.setAdminsThatShouldDeclare(rmAmqpAdmin());
     return queue;
@@ -72,7 +73,7 @@ public class RMQueueConfig {
   @Bean
   public Binding rmToAdapterBinding() {
     Binding binding = BindingBuilder.bind(adapterDeadLetterQueue()).to(actionDlqExchange())
-        .with("Action.Field.binding");
+        .with(ACTION_FIELD_BINDING);
     binding.setAdminsThatShouldDeclare(rmAmqpAdmin());
     return binding;
   }
@@ -87,7 +88,7 @@ public class RMQueueConfig {
 
   @Bean
   public DirectExchange actionDlqExchange() {
-    DirectExchange exchange = new DirectExchange("action-deadletter-exchange");
+    DirectExchange exchange = new DirectExchange(ACTION_DEADLETTER_EXCHANGE);
     exchange.setAdminsThatShouldDeclare(rmAmqpAdmin());
     return exchange;
   }
