@@ -10,7 +10,9 @@ import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTCreateJobRequest;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTUpdateJobRequest;
 import uk.gov.ons.fwmt.fwmtrmadapter.service.MessageConverter;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 
 @Component
@@ -37,7 +39,10 @@ public class MessageConverterImpl implements MessageConverter {
     //TODO set as per data mapping
     //fwmtCreateJobRequest.setMandatoryResourceAuthNo(actionRequest();
     //fwmtCreateJobRequest.setPreallocatedJob();
-    fwmtCreateJobRequest.setDueDate(LocalDate.parse(actionRequest.getReturnByDate(), DateTimeFormatter.BASIC_ISO_DATE));
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    fwmtCreateJobRequest.setDueDate(LocalDate.parse(actionRequest.getReturnByDate(), formatter));
     fwmtCreateJobRequest.setAddress(address);
     fwmtCreateJobRequest.setActionType("Create");
     //TODO add caseId additional property
@@ -62,4 +67,5 @@ public class MessageConverterImpl implements MessageConverter {
 
     return fwmtUpdateJobRequest;
   }
+
 }

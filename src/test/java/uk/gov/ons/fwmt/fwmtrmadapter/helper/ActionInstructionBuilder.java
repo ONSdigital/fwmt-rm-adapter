@@ -17,7 +17,7 @@ public class ActionInstructionBuilder {
 
     actionRequest.setCaseId("testCaseId");
     actionRequest.setSurveyRef("testSurveyRef");
-    actionRequest.setReturnByDate("20001111");
+    actionRequest.setReturnByDate("11/11/2000");
 
     actionAddress.setLatitude(BigDecimal.valueOf(1000.00));
     actionAddress.setLongitude(BigDecimal.valueOf(1000.00));
