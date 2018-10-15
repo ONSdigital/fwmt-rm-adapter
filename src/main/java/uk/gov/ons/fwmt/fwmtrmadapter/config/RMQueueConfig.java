@@ -1,12 +1,14 @@
 package uk.gov.ons.fwmt.fwmtrmadapter.config;
 
 import org.aopalliance.aop.Advice;
+import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +28,7 @@ public class RMQueueConfig {
   private static final String ACTION_FIELD_DLQ = "Action.FieldDLQ";
   private static final String ACTION_FIELD_QUEUE = "Action.Field";
   private static final String ACTION_FIELD_BINDING = "Action.Field.binding";
+  public static final String ACTION_DEADLETTER_EXCHANGE = "action-deadletter-exchange";
 
   private String username;
   private String password;
@@ -34,11 +37,11 @@ public class RMQueueConfig {
   private String virtualHost;
 
   public RMQueueConfig(
-      @Value("${rabbitmq.username}") String username,
-      @Value("${rabbitmq.password}") String password,
-      @Value("${rabbitmq.hostname}") String hostname,
-      @Value("${rabbitmq.rmPort}") Integer rmPort,
-      @Value("${rabbitmq.virtualHost}") String virtualHost) {
+      @Value("${rabbitmq.rm.username}") String username,
+      @Value("${rabbitmq.rm.password}") String password,
+      @Value("${rabbitmq.rm.hostname}") String hostname,
+      @Value("${rabbitmq.rm.port}") Integer rmPort,
+      @Value("${rabbitmq.rm.virtualHost}") String virtualHost) {
     this.username = username;
     this.password = password;
     this.hostname = hostname;
@@ -49,24 +52,30 @@ public class RMQueueConfig {
   // Queue
   @Bean
   public Queue rmToAdapterQueue() {
-    return QueueBuilder.durable(ACTION_FIELD_QUEUE)
-        .withArgument("x-dead-letter-exchange", "action-deadletter-exchange")
-        .withArgument("x-dead-letter-routing-key", "Action.Field.binding")
+    Queue queue = QueueBuilder.durable(ACTION_FIELD_QUEUE)
+        .withArgument("x-dead-letter-exchange", ACTION_DEADLETTER_EXCHANGE)
+        .withArgument("x-dead-letter-routing-key", ACTION_FIELD_BINDING)
         .build();
+    queue.setAdminsThatShouldDeclare(rmAmqpAdmin());
+    return queue;
   }
 
   // Dead Letter Queue
   @Bean
   public Queue adapterDeadLetterQueue() {
-    return QueueBuilder.durable(ACTION_FIELD_DLQ).build();
+    Queue queue = QueueBuilder.durable(ACTION_FIELD_DLQ).build();
+    queue.setAdminsThatShouldDeclare(rmAmqpAdmin());
+    return queue;
   }
 
   // Bindings
+
   @Bean
-  public Binding rmToAdapterBinding(@Qualifier("rmToAdapterQueue") Queue queue,
-      @Qualifier("rmExchange") DirectExchange directExchange) {
-    return BindingBuilder.bind(queue).to(directExchange)
+  public Binding rmToAdapterBinding() {
+    Binding binding = BindingBuilder.bind(adapterDeadLetterQueue()).to(actionDlqExchange())
         .with(ACTION_FIELD_BINDING);
+    binding.setAdminsThatShouldDeclare(rmAmqpAdmin());
+    return binding;
   }
 
   // Listener
@@ -76,9 +85,12 @@ public class RMQueueConfig {
   }
 
   // Exchange
+
   @Bean
-  public DirectExchange rmExchange() {
-    return new DirectExchange(ACTION_FIELD_BINDING);
+  public DirectExchange actionDlqExchange() {
+    DirectExchange exchange = new DirectExchange(ACTION_DEADLETTER_EXCHANGE);
+    exchange.setAdminsThatShouldDeclare(rmAmqpAdmin());
+    return exchange;
   }
 
   // Container
@@ -96,6 +108,11 @@ public class RMQueueConfig {
     container.setQueueNames(ACTION_FIELD_QUEUE);
     container.setMessageListener(messageListenerAdapter);
     return container;
+  }
+
+  @Bean
+  public AmqpAdmin rmAmqpAdmin() {
+    return new RabbitAdmin(rmConnectionFactory());
   }
 
   // Connection Factory

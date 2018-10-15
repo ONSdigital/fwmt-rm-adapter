@@ -1,12 +1,14 @@
 package uk.gov.ons.fwmt.fwmtrmadapter.config;
 
 import org.aopalliance.aop.Advice;
+import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,11 +34,11 @@ public class FWMTQueueConfig {
   private String virtualHost;
 
   public FWMTQueueConfig(
-      @Value("${rabbitmq.username}") String username,
-      @Value("${rabbitmq.password}") String password,
-      @Value("${rabbitmq.hostname}") String hostname,
-      @Value("${rabbitmq.fwmtPort}") Integer fwmtPort,
-      @Value("${rabbitmq.virtualHost}") String virtualHost) {
+      @Value("${rabbitmq.fwmt.username}") String username,
+      @Value("${rabbitmq.fwmt.password}") String password,
+      @Value("${rabbitmq.fwmt.hostname}") String hostname,
+      @Value("${rabbitmq.fwmt.port}") Integer fwmtPort,
+      @Value("${rabbitmq.fwmt.virtualHost}") String virtualHost) {
     this.username = username;
     this.password = password;
     this.hostname = hostname;
@@ -47,76 +49,98 @@ public class FWMTQueueConfig {
   // Queue
   @Bean
   public Queue adapterToJobSvcQueue() {
-    return QueueBuilder.durable(QueueNames.ADAPTER_TO_JOBSVC_QUEUE)
+    Queue queue = QueueBuilder.durable(QueueNames.ADAPTER_TO_JOBSVC_QUEUE)
         .withArgument("x-dead-letter-exchange", "")
         .withArgument("x-dead-letter-routing-key", QueueNames.ADAPTER_JOB_SVC_DLQ)
         .build();
+    queue.setAdminsThatShouldDeclare(fwmtAmqpAdmin());
+    return queue;
   }
 
   @Bean
   public Queue jobSvcToAdapterQueue() {
-    return QueueBuilder.durable(QueueNames.JOBSVC_TO_ADAPTER_QUEUE)
+    Queue queue = QueueBuilder.durable(QueueNames.JOBSVC_TO_ADAPTER_QUEUE)
         .withArgument("x-dead-letter-exchange", "")
         .withArgument("x-dead-letter-routing-key", QueueNames.JOB_SVC_ADAPTER_DLQ)
         .build();
+    queue.setAdminsThatShouldDeclare(fwmtAmqpAdmin());
+    return queue;
   }
 
   @Bean
   public Queue adapterToRmQueue() {
-    return QueueBuilder.durable(QueueNames.ADAPTER_TO_RM_QUEUE)
+    Queue queue = QueueBuilder.durable(QueueNames.ADAPTER_TO_RM_QUEUE)
         .withArgument("x-dead-letter-exchange", "")
         .withArgument("x-dead-letter-routing-key", QueueNames.ADAPTER_RM_DLQ)
         .build();
+    queue.setAdminsThatShouldDeclare(fwmtAmqpAdmin());
+    return queue;
   }
 
   // Dead Letter Queues
   @Bean
   public Queue adapterDeadLetterQueue() {
-    return QueueBuilder.durable(QueueNames.ADAPTER_JOB_SVC_DLQ).build();
+    Queue queue = QueueBuilder.durable(QueueNames.ADAPTER_JOB_SVC_DLQ).build();
+    queue.setAdminsThatShouldDeclare(fwmtAmqpAdmin());
+    return queue;
   }
 
   @Bean
   public Queue jobSvsDeadLetterQueue() {
-    return QueueBuilder.durable(QueueNames.JOB_SVC_ADAPTER_DLQ).build();
+    Queue queue = QueueBuilder.durable(QueueNames.JOB_SVC_ADAPTER_DLQ).build();
+    queue.setAdminsThatShouldDeclare(fwmtAmqpAdmin());
+    return queue;
   }
 
   @Bean
   public Queue rmAdapterDeadLetterQueue() {
-    return QueueBuilder.durable(QueueNames.RM_ADAPTER_DLQ).build();
+    Queue queue = QueueBuilder.durable(QueueNames.RM_ADAPTER_DLQ).build();
+    queue.setAdminsThatShouldDeclare(fwmtAmqpAdmin());
+    return queue;
   }
 
   @Bean
   public Queue adapterRmDeadLetterQueue() {
-    return QueueBuilder.durable(QueueNames.ADAPTER_RM_DLQ).build();
+    Queue queue = QueueBuilder.durable(QueueNames.ADAPTER_RM_DLQ).build();
+    queue.setAdminsThatShouldDeclare(fwmtAmqpAdmin());
+    return queue;
   }
 
   // Exchange
   @Bean
   @Primary
   public DirectExchange fwmtExchange() {
-    return new DirectExchange(QueueNames.RM_JOB_SVC_EXCHANGE);
+    DirectExchange directExchange = new DirectExchange(QueueNames.RM_JOB_SVC_EXCHANGE);
+    directExchange.setAdminsThatShouldDeclare(fwmtAmqpAdmin());
+    return directExchange;
   }
 
   // Bindings
   @Bean
   public Binding adapterToJobSvcBinding(@Qualifier("adapterToJobSvcQueue") Queue queue,
       @Qualifier("fwmtExchange") DirectExchange directExchange) {
-    return BindingBuilder.bind(queue).to(directExchange)
+    Binding binding = BindingBuilder.bind(queue).to(directExchange)
         .with(QueueNames.JOB_SVC_REQUEST_ROUTING_KEY);
+    binding.setAdminsThatShouldDeclare(fwmtAmqpAdmin());
+    return binding;
   }
 
   @Bean
   public Binding jobSvcToAdapterBinding(@Qualifier("jobSvcToAdapterQueue") Queue queue,
       @Qualifier("fwmtExchange") DirectExchange directExchange) {
-    return BindingBuilder.bind(queue).to(directExchange)
+    Binding binding = BindingBuilder.bind(queue).to(directExchange)
         .with(QueueNames.JOB_SVC_RESPONSE_ROUTING_KEY);
+    binding.setAdminsThatShouldDeclare(fwmtAmqpAdmin());
+    return binding;
   }
 
   @Bean
   public Binding adapterToRmBinding(@Qualifier("adapterToRmQueue") Queue queue,
       @Qualifier("fwmtExchange") DirectExchange directExchange) {
-    return BindingBuilder.bind(queue).to(directExchange)
+    Binding binding = BindingBuilder.bind(queue).to(directExchange)
         .with(QueueNames.RM_RESPONSE_ROUTING_KEY);
+    binding.setAdminsThatShouldDeclare(fwmtAmqpAdmin());
+    return binding;
   }
 
   // Listener
@@ -150,6 +174,11 @@ public class FWMTQueueConfig {
     container.setQueueNames(QueueNames.JOBSVC_TO_ADAPTER_QUEUE);
     container.setMessageListener(messageListenerAdapter);
     return container;
+  }
+
+  @Bean
+  public AmqpAdmin fwmtAmqpAdmin() {
+    return new RabbitAdmin(fwmtConnectionFactory());
   }
 
   // Connection Factory

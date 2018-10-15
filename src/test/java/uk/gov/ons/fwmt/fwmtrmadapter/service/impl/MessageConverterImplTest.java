@@ -31,9 +31,10 @@ public class MessageConverterImplTest {
     FWMTCreateJobRequest result = messageConverter.createJob(actionInstruction);
 
     //Then
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     assertEquals(actionInstruction.getActionRequest().getSurveyRef(), result.getSurveyType());
     assertEquals(
-        LocalDate.parse(actionInstruction.getActionRequest().getReturnByDate(), DateTimeFormatter.BASIC_ISO_DATE),
+        LocalDate.parse(actionInstruction.getActionRequest().getReturnByDate(), formatter),
         result.getDueDate());
     assertEquals(actionInstruction.getActionRequest().getAddress().getLatitude(),
         result.getAddress().getLatitude());
