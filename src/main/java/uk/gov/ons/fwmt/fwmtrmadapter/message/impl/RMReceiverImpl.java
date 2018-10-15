@@ -29,6 +29,7 @@ public class RMReceiverImpl implements RMReceiver {
       ByteArrayInputStream input = new ByteArrayInputStream(createJobRequestXML);
       JAXBElement<ActionInstruction> rmActionInstruction = unmarshaller.unmarshal(new StreamSource(input), ActionInstruction.class);
       rmAdapterService.sendJobRequest(rmActionInstruction.getValue());
+      log.info("Received Job request from RM");
     } catch (JAXBException e) {
       throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed to unmarshal XML message.", e);
     }
