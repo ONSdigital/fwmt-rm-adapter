@@ -38,7 +38,7 @@ public class RMProducerImpl implements RMProducer {
       String rmJobRequestResponse = sw.toString();
 
       rabbitTemplate.convertAndSend(exchange.getName(), QueueNames.RM_RESPONSE_ROUTING_KEY, rmJobRequestResponse);
-      log.info("Sent job request to Job service");
+      log.info("Sent job response to RM");
     } catch (JAXBException e) {
       throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed to convert and send to RM.", e);
     }
