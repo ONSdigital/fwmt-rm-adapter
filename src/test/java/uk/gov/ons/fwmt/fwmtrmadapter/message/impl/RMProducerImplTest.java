@@ -13,7 +13,10 @@ import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.config.QueueNames;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.error.CTPException;
+import uk.gov.ons.fwmt.fwmtohsjobstatusnotification.FwmtOHSJobStatusNotification;
 import uk.gov.ons.fwmt.fwmtrmadapter.data.DummyRMReturn;
+import uk.gov.ons.fwmt.noncontactdetail.NonContactDetail;
+import uk.gov.ons.fwmt.propertydetails.PropertyDetails;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
@@ -41,9 +44,14 @@ public class RMProducerImplTest {
   @Test
   public void sendJobRequestResponse() throws CTPException {
 
-    DummyRMReturn rmReturn = new DummyRMReturn();
-    rmReturn.setIdentity("testIdentity");
-    String expectedResult = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><DummyRMReturn><identity>testIdentity</identity></DummyRMReturn>";
+    FwmtOHSJobStatusNotification rmReturn = new FwmtOHSJobStatusNotification();
+    rmReturn.setJobIdentity("testIdentity");
+    rmReturn.setUsername("testUser");
+    rmReturn.setPropertyDetails(new PropertyDetails());
+    rmReturn.setNonContactDetail(new NonContactDetail());
+    rmReturn.getPropertyDetails().setDescription("description");
+    rmReturn.getNonContactDetail().setContactCardLeft("Yes");
+    String expectedResult = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><ns2:FwmtOHSJobStatusNotification xmlns:ns2=\"http://ons.gov.uk/fwmt/FwmtOHSJobStatusNotification\"><jobIdentity>testIdentity</jobIdentity><nonContactDetail><contactCardLeft>Yes</contactCardLeft></nonContactDetail><propertyDetails><description>description</description></propertyDetails><username>testUser</username></ns2:FwmtOHSJobStatusNotification>";
     when(exchange.getName()).thenReturn(QueueNames.RM_JOB_SVC_EXCHANGE);
     rmProducer.sendJobRequestResponse(rmReturn);
 

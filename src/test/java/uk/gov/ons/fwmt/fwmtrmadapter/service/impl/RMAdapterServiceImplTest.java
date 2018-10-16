@@ -14,6 +14,7 @@ import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTCancelJobRequest;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTCreateJobRequest;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTUpdateJobRequest;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.error.CTPException;
+import uk.gov.ons.fwmt.fwmtohsjobstatusnotification.FwmtOHSJobStatusNotification;
 import uk.gov.ons.fwmt.fwmtrmadapter.data.DummyRMReturn;
 import uk.gov.ons.fwmt.fwmtrmadapter.helper.ActionInstructionBuilder;
 import uk.gov.ons.fwmt.fwmtrmadapter.message.impl.JobServiceProducerImpl;
@@ -90,28 +91,17 @@ public class RMAdapterServiceImplTest {
   @Test
   public void returnJobRequest() throws CTPException {
     //Given
-    DummyTMResponse response = new DummyTMResponse();
-    response.setIdentity("dummy");
+    FwmtOHSJobStatusNotification response = new FwmtOHSJobStatusNotification();
+    response.setJobIdentity("dummy");
 
     //When
     rmAdapterService.returnJobRequest(response);
 
     //Then
-    Mockito.verify(rmProducer).sendJobRequestResponse((DummyRMReturn) argCaptor.capture());
-    DummyRMReturn result = (DummyRMReturn) argCaptor.getValue();
-    assertEquals(response.getIdentity(), result.getIdentity());
+    Mockito.verify(rmProducer).sendJobRequestResponse((FwmtOHSJobStatusNotification) argCaptor.capture());
+    FwmtOHSJobStatusNotification result = (FwmtOHSJobStatusNotification) argCaptor.getValue();
+    assertEquals(response.getJobIdentity(), result.getJobIdentity());
   }
 
-  @Test
-  public void convertTMResponse() {
-    //Given
-    DummyTMResponse response = new DummyTMResponse();
-    response.setIdentity("dummy");
 
-    //When
-    DummyRMReturn rmReturn = rmAdapterService.convertTMResponse(response);
-
-    //Then
-    assertEquals(response.getIdentity(), rmReturn.getIdentity());
-  }
 }
