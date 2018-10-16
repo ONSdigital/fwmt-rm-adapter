@@ -38,7 +38,6 @@ public class RMAdapterServiceImpl implements RMAdapterService {
 
   public void returnJobRequest(FwmtOHSJobStatusNotification response) throws CTPException {
     rmProducer.sendJobRequestResponse(response);
-
   }
 
 }
