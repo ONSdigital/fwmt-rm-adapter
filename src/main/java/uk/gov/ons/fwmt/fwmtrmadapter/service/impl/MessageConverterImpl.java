@@ -14,6 +14,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class MessageConverterImpl implements MessageConverter {
@@ -45,7 +47,10 @@ public class MessageConverterImpl implements MessageConverter {
     fwmtCreateJobRequest.setDueDate(LocalDate.parse(actionRequest.getReturnByDate(), formatter));
     fwmtCreateJobRequest.setAddress(address);
     fwmtCreateJobRequest.setActionType("Create");
-    //TODO add caseId additional property
+
+    Map<String, String> additionalPropertiesMap = new HashMap<>();
+    additionalPropertiesMap.put("caseId", actionRequest.getCaseId());
+    fwmtCreateJobRequest.setAdditionalProperties(additionalPropertiesMap);
 
     return fwmtCreateJobRequest;
   }
