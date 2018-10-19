@@ -14,6 +14,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class MessageConverterImpl implements MessageConverter {
@@ -25,16 +27,16 @@ public class MessageConverterImpl implements MessageConverter {
     ActionAddress actionAddress = actionRequest.getAddress();
 
     Address address = new Address();
-    address.setLatitude(actionAddress.getLatitude());
-    address.setLongitude(actionAddress.getLongitude());
     address.setLine1(actionAddress.getLine1());
     address.setLine2(actionAddress.getLine2());
     address.setLine3(actionAddress.getLine3());
     address.setLine4(actionAddress.getLine4());
-    address.setPostCode(actionAddress.getPostcode());
     address.setTownName(actionAddress.getTownName());
+    address.setPostCode(actionAddress.getPostcode());
+    address.setLatitude(actionAddress.getLatitude());
+    address.setLongitude(actionAddress.getLongitude());
 
-    fwmtCreateJobRequest.setJobIdentity(actionRequest.getActionId());
+    fwmtCreateJobRequest.setJobIdentity(actionRequest.getCaseRef());
     fwmtCreateJobRequest.setSurveyType(actionRequest.getSurveyRef());
     //TODO set as per data mapping
     //fwmtCreateJobRequest.setMandatoryResourceAuthNo(actionRequest();
@@ -45,7 +47,10 @@ public class MessageConverterImpl implements MessageConverter {
     fwmtCreateJobRequest.setDueDate(LocalDate.parse(actionRequest.getReturnByDate(), formatter));
     fwmtCreateJobRequest.setAddress(address);
     fwmtCreateJobRequest.setActionType("Create");
-    //TODO add caseId additional property
+
+    Map<String, String> additionalPropertiesMap = new HashMap<>();
+    additionalPropertiesMap.put("caseId", actionRequest.getCaseId());
+    fwmtCreateJobRequest.setAdditionalProperties(additionalPropertiesMap);
 
     return fwmtCreateJobRequest;
   }
