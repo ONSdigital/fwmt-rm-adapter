@@ -8,11 +8,10 @@ import uk.gov.ons.fwmt.fwmtgatewaycommon.data.Address;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTCancelJobRequest;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTCreateJobRequest;
 import uk.gov.ons.fwmt.fwmtgatewaycommon.data.FWMTUpdateJobRequest;
+import uk.gov.ons.fwmt.fwmtgatewaycommon.error.CTPException;
 import uk.gov.ons.fwmt.fwmtrmadapter.service.MessageConverter;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +20,7 @@ import java.util.Map;
 public class MessageConverterImpl implements MessageConverter {
 
   @Override
-  public FWMTCreateJobRequest createJob(ActionInstruction actionInstruction) {
+  public FWMTCreateJobRequest createJob(ActionInstruction actionInstruction) throws CTPException {
     FWMTCreateJobRequest fwmtCreateJobRequest = new FWMTCreateJobRequest();
     ActionRequest actionRequest = actionInstruction.getActionRequest();
     ActionAddress actionAddress = actionRequest.getAddress();
@@ -43,8 +42,14 @@ public class MessageConverterImpl implements MessageConverter {
     //fwmtCreateJobRequest.setPreallocatedJob();
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    try {
+      fwmtCreateJobRequest.setDueDate(LocalDate.parse(actionRequest.getReturnByDate(), formatter));
+    } catch (RuntimeException e) {
+      throw new CTPException(CTPException.Fault.SYSTEM_ERROR, e,
+          "Failed to convert return by date, expected format dd/MM/yyyy: ",
+          actionRequest.getReturnByDate());
+    }
 
-    fwmtCreateJobRequest.setDueDate(LocalDate.parse(actionRequest.getReturnByDate(), formatter));
     fwmtCreateJobRequest.setAddress(address);
     fwmtCreateJobRequest.setActionType("Create");
 
