@@ -14,4 +14,4 @@ applications:
     logging_level_org.springframework.web: SPRING_LOG_LEVEL
     logging_level_org.hibernate: SPRING_LOG_LEVEL
     logging_level_org.apache.commons.dbcp2: SPRING_LOG_LEVEL
-
+    logging_level_org.springframework.amqp: SPRING_LOG_LEVEL
