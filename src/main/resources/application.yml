@@ -16,12 +16,13 @@ management.endpoint.health.show-details: always
 logging:
   level:
     root: WARN
-    uk.gov.ons.fwmt: DEBUG
-    org.springframework.security: ERROR
-    org.springframework.web: ERROR
-    org.springframework.amqp: ERROR
-    org.hibernate: ERROR
-    org.apache.commons.dbcp2: ERROR
+    uk.gov.ons.fwmt: INFO
+    org.springframework.security: INFO
+    org.springframework.web: INFO
+    org.springframework.amqp: INFO
+    org.hibernate: INFO
+    org.apache.commons.dbcp2: INFO
+    org.springframework: INFO
   file: target/SpringErrors/spring.log
   pattern:
     console: "%d{yyyy-MMM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{CID}] %logger{1}::%M - %msg%n"
