@@ -36,7 +36,7 @@ public class RMReceiverImplTest {
   @Test
   public void receiveMessageCreate() throws CTPException {
 
-    rmReceiver.receiveMessage(ACTION_REQUEST_XML.getBytes());
+    rmReceiver.receiveMessage(ACTION_REQUEST_XML);
 
     ArgumentCaptor <ActionInstruction> actionInstructionArgumentCaptor = ArgumentCaptor.forClass(ActionInstruction.class);
 
@@ -74,7 +74,7 @@ public class RMReceiverImplTest {
   @Test
   public void receiveMessageCancel() throws CTPException {
 
-    rmReceiver.receiveMessage(ACTION_CANCEL_XML.getBytes());
+    rmReceiver.receiveMessage(ACTION_CANCEL_XML);
 
     ArgumentCaptor <ActionInstruction> actionInstructionArgumentCaptor = ArgumentCaptor.forClass(ActionInstruction.class);
 
