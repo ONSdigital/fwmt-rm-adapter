@@ -37,7 +37,6 @@ public class RabbitHealthCheckController {
     factory.setPassword(rmPassword);
     factory.setPort(rmPort);
     factory.setVirtualHost(virtualHost);
-    System.out.println(rmUsername+" "+ rmPassword+" "+rmHostname+" "+rmPort);
     return factory;
   }
 
