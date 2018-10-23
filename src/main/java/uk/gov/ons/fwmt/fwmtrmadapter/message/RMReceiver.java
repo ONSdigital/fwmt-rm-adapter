@@ -4,5 +4,5 @@ import uk.gov.ons.fwmt.fwmtgatewaycommon.error.CTPException;
 
 public interface RMReceiver {
 
-  void receiveMessage(byte[] createJobRequestXML) throws CTPException;
+  void receiveMessage(String createJobRequestXML) throws CTPException;
 }
