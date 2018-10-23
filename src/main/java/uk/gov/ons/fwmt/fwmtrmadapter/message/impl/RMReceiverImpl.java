@@ -22,11 +22,11 @@ public class RMReceiverImpl implements RMReceiver {
   @Autowired
   private RMAdapterService rmAdapterService;
 
-  public void receiveMessage(byte[] createJobRequestXML) throws CTPException {
+  public void receiveMessage(String createJobRequestXML) throws CTPException {
     try {
       JAXBContext jaxbContext = JAXBContext.newInstance(ActionInstruction.class);
       Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-      ByteArrayInputStream input = new ByteArrayInputStream(createJobRequestXML);
+      ByteArrayInputStream input = new ByteArrayInputStream(createJobRequestXML.getBytes());
       JAXBElement<ActionInstruction> rmActionInstruction = unmarshaller.unmarshal(new StreamSource(input), ActionInstruction.class);
       rmAdapterService.sendJobRequest(rmActionInstruction.getValue());
       log.info("Received Job request from RM");
