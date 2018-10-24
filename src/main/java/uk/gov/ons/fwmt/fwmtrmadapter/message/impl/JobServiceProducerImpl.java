@@ -29,14 +29,13 @@ public class JobServiceProducerImpl implements JobServiceProducer {
   public void sendMessage(Object dto) throws CTPException {
     String JSONJobRequest = convertToJSON(dto);
     rabbitTemplate.convertAndSend(exchange.getName(), QueueNames.JOB_SVC_REQUEST_ROUTING_KEY, JSONJobRequest);
-    log.info("Message send to queue", dto);
+    log.info("Message send to queue");
   }
 
   protected String convertToJSON(Object dto) throws CTPException {
     String JSONJobRequest;
     try {
       JSONJobRequest = objectMapper.writeValueAsString(dto);
-      log.info("CreateJobRequest: " + JSONJobRequest);
     } catch (JsonProcessingException e) {
       throw new CTPException(CTPException.Fault.SYSTEM_ERROR, "Failed to process JSON.", e);
     }
