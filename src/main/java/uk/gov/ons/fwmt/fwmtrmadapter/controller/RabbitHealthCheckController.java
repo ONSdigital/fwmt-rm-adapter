@@ -24,11 +24,16 @@ public class RabbitHealthCheckController {
   private static final String ACTION_FIELD_QUEUE = "Action.Field";
   private static final String ACTION_FIELD_BINDING = "Action.Field.binding";
 
-  @Value("${rabbitmq.rm.username}") String rmUsername;
-  @Value("${rabbitmq.rm.password}") String rmPassword;
-  @Value("${rabbitmq.rm.hostname}") String rmHostname;
-  @Value("${rabbitmq.rm.port}") Integer rmPort;
-  @Value("${rabbitmq.rm.virtualHost}") String virtualHost;
+  @Value("${rabbitmq.rm.username}")
+  private String rmUsername;
+  @Value("${rabbitmq.rm.password}")
+  private String rmPassword;
+  @Value("${rabbitmq.rm.hostname}")
+  private String rmHostname;
+  @Value("${rabbitmq.rm.port}")
+  private Integer rmPort;
+  @Value("${rabbitmq.rm.virtualHost}")
+  private String virtualHost;
 
   private CachingConnectionFactory getRMConnectionFactory() {
     CachingConnectionFactory factory = new CachingConnectionFactory();
