@@ -4,9 +4,11 @@ package uk.gov.ons.fwmt.fwmtrmadapter.controller;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,32 +26,14 @@ public class RabbitHealthCheckController {
   private static final String ACTION_FIELD_QUEUE = "Action.Field";
   private static final String ACTION_FIELD_BINDING = "Action.Field.binding";
 
-  @Value("${rabbitmq.rm.username}")
-  private String rmUsername;
-  @Value("${rabbitmq.rm.password}")
-  private String rmPassword;
-  @Value("${rabbitmq.rm.hostname}")
-  private String rmHostname;
-  @Value("${rabbitmq.rm.port}")
-  private Integer rmPort;
-  @Value("${rabbitmq.rm.virtualHost}")
-  private String virtualHost;
-
-  private CachingConnectionFactory getRMConnectionFactory() {
-    CachingConnectionFactory factory = new CachingConnectionFactory();
-    factory.setHost(rmHostname);
-    factory.setUsername(rmUsername);
-    factory.setPassword(rmPassword);
-    factory.setPort(rmPort);
-    factory.setVirtualHost(virtualHost);
-    return factory;
-  }
-
+  @Autowired
+  @Qualifier("rmConnectionFactory")
+  ConnectionFactory factory;
 
   @RequestMapping(value = "/rabbitHealth", method = RequestMethod.GET, produces = "application/json")
   public boolean rabbitHealth(){
 
-    RabbitAdmin rabbitAdmin = new RabbitAdmin(getRMConnectionFactory());
+    RabbitAdmin rabbitAdmin = new RabbitAdmin(factory);
 
     String result1 = rabbitAdmin.getQueueProperties(ACTION_FIELD_QUEUE).getProperty("QUEUE_NAME");
 
