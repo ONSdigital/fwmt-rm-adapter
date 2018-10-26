@@ -69,7 +69,6 @@ public class RMQueueConfig {
   }
 
   // Bindings
-
   @Bean
   public Binding rmToAdapterBinding() {
     Binding binding = BindingBuilder.bind(adapterDeadLetterQueue()).to(actionDlqExchange())
@@ -85,7 +84,6 @@ public class RMQueueConfig {
   }
 
   // Exchange
-
   @Bean
   public DirectExchange actionDlqExchange() {
     DirectExchange exchange = new DirectExchange(ACTION_DEADLETTER_EXCHANGE);
@@ -110,6 +108,7 @@ public class RMQueueConfig {
     return container;
   }
 
+  // Amqp Admin
   @Bean
   public AmqpAdmin rmAmqpAdmin() {
     return new RabbitAdmin(rmConnectionFactory());
