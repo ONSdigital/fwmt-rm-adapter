@@ -28,8 +28,6 @@ public class MessageConverterImpl implements MessageConverter {
     Address address = new Address();
     address.setLine1(actionAddress.getLine1());
     address.setLine2(actionAddress.getLine2());
-    address.setLine3(actionAddress.getLine3());
-    address.setLine4(actionAddress.getLine4());
     address.setTownName(actionAddress.getTownName());
     address.setPostCode(actionAddress.getPostcode());
     address.setLatitude(actionAddress.getLatitude());
@@ -64,7 +62,7 @@ public class MessageConverterImpl implements MessageConverter {
   public FWMTCancelJobRequest cancelJob(ActionInstruction actionInstruction) {
     FWMTCancelJobRequest fwmtCancelJobRequest = new FWMTCancelJobRequest();
     fwmtCancelJobRequest.setActionType("Cancel");
-    fwmtCancelJobRequest.setJobIdentity(actionInstruction.getActionCancel().getActionId());
+    fwmtCancelJobRequest.setJobIdentity(actionInstruction.getActionCancel().getCaseRef());
     fwmtCancelJobRequest.setReason(actionInstruction.getActionCancel().getReason());
 
     return fwmtCancelJobRequest;
