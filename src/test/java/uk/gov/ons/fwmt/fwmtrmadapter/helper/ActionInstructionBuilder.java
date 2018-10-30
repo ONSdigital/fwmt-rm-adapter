@@ -23,8 +23,6 @@ public class ActionInstructionBuilder {
     actionAddress.setLongitude(BigDecimal.valueOf(1000.00));
     actionAddress.setLine1("addressLine1");
     actionAddress.setLine2("addressLine2");
-    actionAddress.setLine3("addressLine3");
-    actionAddress.setLine4("addressLine4");
     actionAddress.setPostcode("testPostcode");
     actionAddress.setTownName("testTownName");
 
@@ -40,6 +38,7 @@ public class ActionInstructionBuilder {
 
     actionCancel.setReason("reason");
     actionCancel.setActionId("testActionID");
+    actionCancel.setCaseRef("testCaseRef");
 
     actionInstruction.setActionCancel(actionCancel);
 
