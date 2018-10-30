@@ -35,6 +35,7 @@ public class MessageConverterImpl implements MessageConverter {
     address.setPostCode(actionAddress.getPostcode());
     address.setLatitude(actionAddress.getLatitude());
     address.setLongitude(actionAddress.getLongitude());
+    address.setOrganisationName(actionAddress.getOrganisationName());
 
     fwmtCreateJobRequest.setJobIdentity(actionRequest.getCaseRef());
     fwmtCreateJobRequest.setSurveyType(actionRequest.getSurveyRef());
@@ -50,6 +51,13 @@ public class MessageConverterImpl implements MessageConverter {
 
     Map<String, String> additionalPropertiesMap = new HashMap<>();
     additionalPropertiesMap.put("caseId", actionRequest.getCaseId());
+    if (actionRequest.getSurveyRef().equals("CE")) {
+      additionalPropertiesMap.put("EstablishmentType", actionAddress.getEstabType());
+      additionalPropertiesMap.put("Category", actionAddress.getCategory());
+      additionalPropertiesMap.put("LAD", actionAddress.getLadCode());
+      additionalPropertiesMap.put("Region", actionRequest.getRegion());
+      additionalPropertiesMap.put("CaseId", actionRequest.getCaseId());
+    }
     fwmtCreateJobRequest.setAdditionalProperties(additionalPropertiesMap);
 
     return fwmtCreateJobRequest;
