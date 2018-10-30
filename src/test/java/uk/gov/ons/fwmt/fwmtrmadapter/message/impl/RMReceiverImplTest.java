@@ -62,8 +62,6 @@ public class RMReceiverImplTest {
     assertEquals(address.getLongitude(), BigDecimal.valueOf(2345.67));
     assertEquals(address.getLine1(),"line1");
     assertEquals(address.getLine2(),"line2");
-    assertEquals(address.getLine3(),"line3");
-    assertEquals(address.getLine4(),"line4");
     assertEquals(address.getPostcode(),"P05T C0D3");
     assertEquals(address.getTownName(),"Town");
 

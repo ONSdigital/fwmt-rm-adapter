@@ -47,8 +47,6 @@ public class MessageConverterImplTest {
         result.getAddress().getTownName());
     assertEquals(actionInstruction.getActionRequest().getAddress().getLine1(), result.getAddress().getLine1());
     assertEquals(actionInstruction.getActionRequest().getAddress().getLine2(), result.getAddress().getLine2());
-    assertEquals(actionInstruction.getActionRequest().getAddress().getLine3(), result.getAddress().getLine3());
-    assertEquals(actionInstruction.getActionRequest().getAddress().getLine4(), result.getAddress().getLine4());
   }
 
   @Test
@@ -61,7 +59,7 @@ public class MessageConverterImplTest {
     FWMTCancelJobRequest result = messageConverter.cancelJob(actionInstruction);
 
     //Then
-    assertEquals(actionInstruction.getActionCancel().getActionId(), result.getJobIdentity());
+    assertEquals("testCaseRef", result.getJobIdentity());
     assertEquals(actionInstruction.getActionCancel().getReason(), result.getReason());
   }
 
