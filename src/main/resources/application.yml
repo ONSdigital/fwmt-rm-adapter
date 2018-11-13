@@ -1,3 +1,11 @@
+info:
+  name: 'project.artifactId'
+  version: 'project.version'
+  origin: 'scm.url'
+  commit: 'buildNumber'
+  branch: 'scmBranch'
+  built: 'timestamp'
+  
 server:
   port: 9094
 
@@ -11,10 +19,13 @@ spring:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
 
-endpoints.enabled: false
-
-endpoints:
-    health.enabled: true
+management:
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    info:
+      enabled: true
 
 logging:
   level:
@@ -36,7 +47,7 @@ rabbitmq:
     username: "guest"
     password: "guest"
     hostname: "localhost"
-    port: 6672
+    port: 5672
     virtualHost: "/"
   fwmt:
     username: "guest"

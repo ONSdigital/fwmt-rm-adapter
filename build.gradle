@@ -147,6 +147,18 @@ check.dependsOn integrationTest
 check.dependsOn jacocoTestReport
 integrationTest.mustRunAfter test
 
+/*
+processResources {
+    filter ReplaceTokens, tokens: [
+            "project.artifactId": "name",
+            "project.version"   : "version",
+            "scm.url"           : "url",
+            "buildNumber"       : "buildnumber",
+            "scmBranch"         : "branch",
+            "timestamp"         : "timestamp",
+    ]
+}
+*/
 artifactory {
 	contextUrl = System.getenv('ARTIFACTORY_URL')
 	publish {
