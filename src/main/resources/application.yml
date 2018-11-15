@@ -20,7 +20,7 @@ spring:
       WRITE_DATES_AS_TIMESTAMPS: false
 
 management:
-  endpoints:
+  endpoint:
     health:
       enabled: true
       show-details: always
