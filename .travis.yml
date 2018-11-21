@@ -27,7 +27,7 @@ after_success:
 - bash <(curl -s https://codecov.io/bash)
 - if [[ "$TRAVIS_BRANCH" = "master" ]] && [[ "$TRAVIS_PULL_REQUEST" = "false" ]] && [[ $TRAVIS_COMMIT_MESSAGE != "JENKINS SNAPSHOT UPDATE" ]];
   then echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin;
-  docker build -t sdcplatform/fwmtrmadapter -t sdcplatform/fwmtrmadapter:rm-adapter-$TRAVIS_BUILD_NUMBER--build-arg jar=build/libs/fwmt-rm-adapter-*.jar .;
+  docker build -t sdcplatform/fwmtrmadapter -t sdcplatform/fwmtrmadapter:rm-adapter-$TRAVIS_BUILD_NUMBER --build-arg jar=build/libs/fwmt-rm-adapter-*.jar .;
   docker push sdcplatform/fwmtrmadapter;
   ./gradlew artifactPublish;
   fi
