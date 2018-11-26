@@ -1,0 +1,17 @@
+---
+applications:
+- name: 'fwmt-rm-adapter-test'
+  instances: 1
+  timeout: 180
+  memory: 1024M
+  path: 'build/libs/fwmt-rm-adapter-0.0.17-SNAPSHOT.jar'
+  services:
+  - 'fwmt-rabbit'
+  - 'rm-rabbitmq'
+  env:
+    logging_level_uk.gov.ons.fwmt: DEBUG
+    logging_level_org.springframework.security: TRACE
+    logging_level_org.springframework.web: TRACE
+    logging_level_org.hibernate: TRACE
+    logging_level_org.apache.commons.dbcp2: TRACE
+    logging_level_org.springframework.amqp: TRACE
