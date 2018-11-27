@@ -1,5 +1,6 @@
 package uk.gov.ons.fwmt.fwmtrmadapter.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Properties;
 
 @Slf4j
 @RestController
@@ -28,7 +29,11 @@ public class RabbitHealthCheckController {
   public boolean canAccessQueue(@RequestParam("qname") String qname) {
     ConnectionFactory cf = ("Action.Field".equals(qname))? rmFactory : fwmtConnectionFactory;
     RabbitAdmin rabbitAdmin = new RabbitAdmin(cf);
-    String result1 = rabbitAdmin.getQueueProperties(qname).getProperty("QUEUE_NAME");
+    Properties queueProperties = rabbitAdmin.getQueueProperties(qname);
+    if (queueProperties == null) {
+      return false;
+    }
+    String result1 = queueProperties.getProperty("QUEUE_NAME");
     if (qname.equals(result1)) {
       return true;
     }
