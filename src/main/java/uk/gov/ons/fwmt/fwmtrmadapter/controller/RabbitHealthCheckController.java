@@ -1,7 +1,11 @@
 package uk.gov.ons.fwmt.fwmtrmadapter.controller;
 
+<<<<<<< HEAD
 import java.util.Properties;
 
+=======
+import lombok.extern.slf4j.Slf4j;
+>>>>>>> branch 'fwmt-602' of https://github.com/ONSdigital/fwmt-rm-adapter.git
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Properties;
 
 @Slf4j
 @RestController
