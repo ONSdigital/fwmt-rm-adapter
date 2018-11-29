@@ -1,48 +1,38 @@
 package uk.gov.ons.fwmt.fwmtrmadapter.controller;
 
+import java.util.Properties;
+
+//github.com/ONSdigital/fwmt-rm-adapter.git
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
-import org.springframework.web.bind.annotation.RestController;
-
-import uk.gov.ons.fwmt.fwmtrmadapter.config.RMQueueConfig;
-
-
-
 @Slf4j
 @RestController
+@RequestMapping("/rabbitHealth")
 public class RabbitHealthCheckController {
-
-  private static final String ACTION_FIELD_QUEUE = "Action.Field";
-  private static final String ACTION_FIELD_BINDING = "Action.Field.binding";
 
   @Autowired
   @Qualifier("rmConnectionFactory")
-  ConnectionFactory factory;
+  private ConnectionFactory rmFactory;
 
-  @RequestMapping(value = "/rabbitHealth", method = RequestMethod.GET, produces = "application/json")
-  public boolean rabbitHealth(){
+  @Autowired
+  @Qualifier("fwmtConnectionFactory")
+  private ConnectionFactory fwmtConnectionFactory;
 
-    RabbitAdmin rabbitAdmin = new RabbitAdmin(factory);
+  @RequestMapping(value = "/queue", method = RequestMethod.GET, produces = "application/json")
+  public boolean canAccessQueue(@RequestParam("qname") String qname) {
+    ConnectionFactory cf = ("Action.Field".equals(qname))? rmFactory : fwmtConnectionFactory;
+    RabbitAdmin rabbitAdmin = new RabbitAdmin(cf);
 
-    String result1 = rabbitAdmin.getQueueProperties(ACTION_FIELD_QUEUE).getProperty("QUEUE_NAME");
-
-    if(result1.equals("Action.Field")){
-      return true;
-    }
-
-    return false;
+    Properties queueProperties = rabbitAdmin.getQueueProperties(qname);
+    return (queueProperties!=null && qname.equals(queueProperties.getProperty("QUEUE_NAME")));
   }
-
-
 }
