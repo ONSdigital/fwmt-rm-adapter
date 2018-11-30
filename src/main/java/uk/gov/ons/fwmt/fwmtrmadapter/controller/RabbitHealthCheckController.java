@@ -29,7 +29,7 @@ public class RabbitHealthCheckController {
 
   @RequestMapping(value = "/queue", method = RequestMethod.GET, produces = "application/json")
   public boolean canAccessQueue(@RequestParam("qname") String qname) {
-    ConnectionFactory cf = ("Action.Field".equals(qname))? rmFactory : fwmtConnectionFactory;
+    ConnectionFactory cf = (qname.contains("Action.Field")) ? rmFactory : fwmtConnectionFactory;
     RabbitAdmin rabbitAdmin = new RabbitAdmin(cf);
 
     Properties queueProperties = rabbitAdmin.getQueueProperties(qname);
