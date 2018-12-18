@@ -1,21 +1,18 @@
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.testing.Test
-import org.ajoberstar.grgit.*
-
+import org.ajoberstar.grgit.Grgit
 
 buildscript {
-	ext {
-		springBootVersion = '2.0.4.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-		jcenter()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-		classpath "org.jfrog.buildinfo:build-info-extractor-gradle:latest.release"
-		classpath 'org.ajoberstar:gradle-git:1.4.2'
-	}
+    ext {
+        springBootVersion = '2.0.4.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:latest.release'
+        classpath 'org.ajoberstar:gradle-git:1.4.2'
+    }
 }
 
 apply plugin: 'java'
@@ -31,92 +28,93 @@ apply plugin: 'org.ajoberstar.grgit'
 group = 'uk.gov.ons.fwmt'
 version = '0.0.32-SNAPSHOT'
 sourceCompatibility = 1.8
-def repo = Grgit.open('.')
+def repo = Grgit.open(projectDir)
 
 repositories {
     mavenLocal()
-	maven { url "http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot-local" }
-	maven { url "http://artifactory-sdc.onsdigital.uk/artifactory/libs-release-local" }
-	mavenCentral()
+    if (!project.hasProperty('omitSDCArtifactory')) {
+        maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot-local' }
+        maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-release-local' }
+    }
+    mavenCentral()
 }
 
-
 configurations {
-	jaxb
-	integrationTestCompile.extendsFrom testCompile
-	integrationTestRuntime.extendsFrom testRuntime
+    jaxb
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
 }
 
 task genJaxb {
-	ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
-	ext.classesDir = "${buildDir}/classes/jaxb"
-	ext.schema = "${projectDir}/src/main/resources/xsd"
+    ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
+    ext.classesDir = "${buildDir}/classes/jaxb"
+    ext.schema = "${projectDir}/src/main/resources/xsd"
 
-	outputs.dir classesDir
+    outputs.dir classesDir
 
-	doLast() {
-		project.ant {
-			taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
-					classpath: configurations.jaxb.asPath
-			mkdir(dir: sourcesDir)
-			mkdir(dir: classesDir)
+    doLast() {
+        project.ant {
+            taskdef name: 'xjc', classname: 'com.sun.tools.xjc.XJCTask',
+                    classpath: configurations.jaxb.asPath
+            mkdir(dir: sourcesDir)
+            mkdir(dir: classesDir)
 
-			xjc(destdir: sourcesDir) {
-				//arg(value: "-xsd")
-				produces(dir: sourcesDir, includes: "**/*.java")
-				schema(dir: schema, includes: "**/*.xsd")
-			}
+            xjc(destdir: sourcesDir) {
+                //arg(value: '-xsd')
+                produces(dir: sourcesDir, includes: '**/*.java')
+                schema(dir: schema, includes: '**/*.xsd')
+            }
 
-			javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
-					debugLevel: "lines,vars,source",
-					classpath: configurations.jaxb.asPath) {
-				src(path: sourcesDir)
-				include(name: "**/*.java")
-				include(name: "*.java")
-			}
+            javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
+                    debugLevel: 'lines,vars,source',
+                    classpath: configurations.jaxb.asPath) {
+                src(path: sourcesDir)
+                include(name: '**/*.java')
+                include(name: '*.java')
+            }
 
-			copy(todir: classesDir) {
-				fileset(dir: sourcesDir, erroronmissingdir: false) {
-					exclude(name: "**/*.java")
-				}
-			}
-		}
-	}
+            copy(todir: classesDir) {
+                fileset(dir: sourcesDir, erroronmissingdir: false) {
+                    exclude(name: '**/*.java')
+                }
+            }
+        }
+    }
 }
 
-
 sourceSets {
-	integrationTest {
-		java {
-			compileClasspath += main.output
-			runtimeClasspath += main.output
-			srcDir file('src/integration-test/java')
-		}
-		resources.srcDir file('src/integration-test/resources')
-	}
+    integrationTest {
+        java {
+            compileClasspath += main.output
+            runtimeClasspath += main.output
+            srcDir file('src/integration-test/java')
+        }
+        resources.srcDir file('src/integration-test/resources')
+    }
 }
 
 bootJar {
-	baseName = 'fwmt-rm-adapter'
-	group = 'uk.gov.ons.fwmt'
-	version =  version
-	manifest {
-		attributes(["Git-Commit": repo.head().getAbbreviatedId(8),
-					"Git-Branch": repo.branch.getCurrent().getName() ], "common")
-	}
+    baseName = 'fwmt-rm-adapter'
+    group = 'uk.gov.ons.fwmt'
+    version = version
+    manifest {
+        attributes(['Git-Commit': repo.head().getAbbreviatedId(8),
+                    'Git-Branch': repo.branch.getCurrent().getName()], 'common')
+    }
 }
+
 test {
-	jacoco {
-		destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
-		classDumpDir = file("$buildDir/jacoco/classpathdumps")
-	}
+    jacoco {
+        destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+        classDumpDir = file("$buildDir/jacoco/classpathdumps")
+    }
 }
 
 jacocoTestReport {
-	reports {
-		xml.enabled true
-		html.enabled false
-	}
+    reports {
+        xml.enabled true
+        html.enabled false
+    }
 //	afterEvaluate {
 //		classDirectories = files(classDirectories.files.collect {
 //			fileTree(dir: it, exclude: [
@@ -136,13 +134,13 @@ test.finalizedBy(project.tasks.jacocoTestReport)
 check.dependsOn jacocoTestReport
 
 task integrationTest(type: Test) {
-	jacoco {
-		destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
-		classDumpDir = file("$buildDir/jacoco/classpathdumps")
-	}
-	testClassesDirs = sourceSets.integrationTest.output.classesDirs
-	classpath = sourceSets.integrationTest.runtimeClasspath
-	outputs.upToDateWhen { false }
+    jacoco {
+        destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+        classDumpDir = file("$buildDir/jacoco/classpathdumps")
+    }
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    outputs.upToDateWhen { false }
 }
 check.dependsOn integrationTest
 check.dependsOn jacocoTestReport
@@ -151,60 +149,66 @@ integrationTest.mustRunAfter test
 /*
 processResources {
     filter ReplaceTokens, tokens: [
-            "project.artifactId": "name",
-            "project.version"   : "version",
-            "scm.url"           : "url",
-            "buildNumber"       : "buildnumber",
-            "scmBranch"         : "branch",
-            "timestamp"         : "timestamp",
+            'project.artifactId': 'name',
+            'project.version'   : 'version',
+            'scm.url'           : 'url',
+            'buildNumber'       : 'buildnumber',
+            'scmBranch'         : 'branch',
+            'timestamp'         : 'timestamp',
     ]
 }
 */
+
 artifactory {
-	contextUrl = System.getenv('ARTIFACTORY_URL')
-	publish {
-		repository {
-			repoKey = 'libs-snapshot-local'
-			username = System.getenv('ARTIFACTORY_USERNAME')
-			password = System.getenv('ARTIFACTORY_PASSWORD')
-		}
-	}
+    contextUrl = System.getenv('ARTIFACTORY_URL')
+    publish {
+        repository {
+            repoKey = 'libs-snapshot-local'
+            username = System.getenv('ARTIFACTORY_USERNAME')
+            password = System.getenv('ARTIFACTORY_PASSWORD')
+        }
+    }
 }
 
 publishing {
-	publications {
-		maven(MavenPublication) {
-			groupId = group
-			artifactId = 'fwmt-rm-adapter'
-			version = version
+    publications {
+        maven(MavenPublication) {
+            groupId = group
+            artifactId = 'fwmt-rm-adapter'
+            version = version
 
-			from components.java
-		}
-	}
+            from components.java
+        }
+    }
 }
 
 artifactoryPublish {
-	publications ('maven')
+    publications('maven')
 }
 
-
 dependencies {
-	compile(files(genJaxb.classesDir).builtBy(genJaxb))
-	jaxb "com.sun.xml.bind:jaxb-xjc:2.1.7"
-    compile group: 'org.springframework.retry', name: 'spring-retry', version: '1.2.2.RELEASE'
+    jaxb group: 'com.sun.xml.bind', name: 'jaxb-xjc', version: '2.1.7'
+    compile(files(genJaxb.classesDir).builtBy(genJaxb))
+
     compile group: 'org.springframework', name: 'spring-aop', version: '5.0.8.RELEASE'
-	compile group: 'org.projectlombok', name: 'lombok', version: '1.16.8'
+    compile group: 'org.springframework.retry', name: 'spring-retry', version: '1.2.2.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-amqp'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.16.8'
+
     compile group: 'uk.gov.ons.fwmt', name: 'fwmt-gateway-common', version: '0.0.15-RELEASE'
-	compile("org.springframework.boot:spring-boot-starter-amqp")
-	compile('org.springframework.boot:spring-boot-starter')
-	compile('org.springframework.boot:spring-boot-starter-actuator')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.5'
-	compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.5'
-	compile group: 'org.json', name: 'json', version: '20180130'
-	testCompile('org.springframework.boot:spring-boot-starter-test')
 
-	integrationTestCompile 'org.assertj:assertj-core:3.0.0'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.5'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.5'
 
-	integrationTestRuntime group: 'uk.gov.ons.fwmt', name: 'fwmt-service-mocks', version: '1.0.1-SNAPSHOT'
+    compile group: 'org.json', name: 'json', version: '20180130'
+
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+
+    integrationTestCompile group: 'org.assertj', name: 'assertj-core', version: '3.0.0'
+
+    integrationTestRuntime group: 'uk.gov.ons.fwmt', name: 'fwmt-service-mocks', version: '1.0.1-SNAPSHOT'
 }
